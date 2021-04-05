@@ -1,8 +1,10 @@
-import React from "react";
-import { StyleSheet } from "react-native";
+import React, { Suspense } from "react";
+import { lazy } from "@loadable/component";
+import { StyleSheet, ActivityIndicator, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import Login from "../Login";
+// import Login from "../Login";
+const Login = lazy(() => import("../Login"));
 const Stack = createStackNavigator();
 
 const RootNavigation = () => {
@@ -12,7 +14,31 @@ const RootNavigation = () => {
         screenOptions={{
           headerShown: false,
         }}>
-        <Stack.Screen name='Home' component={Login} />
+        <Stack.Screen
+          name='Home'
+          component={(props) => (
+            <Suspense
+              fallback={
+                <View
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#ffffff",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}>
+                  <ActivityIndicator
+                    size='large'
+                    color='#82b1ff'
+                    style={{
+                      margin: "auto",
+                    }}
+                  />
+                </View>
+              }>
+              <Login {...props} />
+            </Suspense>
+          )}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

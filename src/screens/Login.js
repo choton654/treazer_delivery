@@ -1,21 +1,30 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View, Dimensions } from "react-native";
+import React, { useState, Suspense } from "react";
+import { lazy } from "@loadable/component";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+  ActivityIndicator,
+} from "react-native";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { TextInput, Button, Divider, HelperText } from "react-native-paper";
-import Signup from "./Signup";
+// import Signup from "./Signup";
+const Signup = lazy(() => import("./Signup"));
 const { height } = Dimensions.get("window");
 
 const Login = () => {
   const [phoneNo, setPhoneNo] = useState("");
   const [password, setPassword] = useState("");
-  const hasErrors = () => {
+  const passErrors = () => {
+    return phoneNo.includes("#");
+  };
+  const phoneErrors = () => {
     return phoneNo.includes("#");
   };
   const [visible, setVisible] = React.useState(false);
-
   const showDialog = () => setVisible(true);
-
   const hideDialog = () => setVisible(false);
   return (
     <View style={styles.v1}>
@@ -94,7 +103,7 @@ const Login = () => {
             color: "#212121",
           }}
         />
-        <HelperText type='error' visible={hasErrors()}>
+        <HelperText type='error' visible={phoneErrors()}>
           Phone no. doesn't contain spacial charecters
         </HelperText>
         <TextInput
@@ -108,7 +117,7 @@ const Login = () => {
             color: "#212121",
           }}
         />
-        <HelperText type='error' visible={hasErrors()}>
+        <HelperText type='error' visible={passErrors()}>
           Phone no. doesn't contain spacial charecters
         </HelperText>
         <Button
@@ -193,7 +202,26 @@ const Login = () => {
           Signup Here
         </Text>
       </View>
-      <Signup visible={visible} hideDialog={hideDialog} />
+      <Suspense
+        fallback={
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: "#ffffff",
+              justifyContent: "center",
+              alignItems: "center",
+            }}>
+            <ActivityIndicator
+              size='large'
+              color='#82b1ff'
+              style={{
+                margin: "auto",
+              }}
+            />
+          </View>
+        }>
+        <Signup visible={visible} hideDialog={hideDialog} />
+      </Suspense>
     </View>
   );
 };
