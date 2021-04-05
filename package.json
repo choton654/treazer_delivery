@@ -1,6 +1,8 @@
 {
   "main": "index.js",
   "scripts": {
+    "predeploy": "expo build:web",
+    "deploy-hosting": "npm run predeploy && firebase deploy --only hosting",
     "android": "react-native run-android",
     "build": "expo build:web",
     "ios": "react-native run-ios",
