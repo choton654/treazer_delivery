@@ -10,7 +10,8 @@ import {
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { TextInput, Button, Divider, HelperText } from "react-native-paper";
-// import Signup from "./Signup";
+import axios from "axios";
+import BASE_URL from "../api";
 const Signup = lazy(() => import("./Signup"));
 const { height } = Dimensions.get("window");
 
@@ -26,6 +27,29 @@ const Login = () => {
   const [visible, setVisible] = React.useState(false);
   const showDialog = () => setVisible(true);
   const hideDialog = () => setVisible(false);
+
+  const login = () => {
+    axios
+      .post(`${BASE_URL}/api/user/login`, { phone: phoneNo, password })
+      .then((res) => {
+        const { user, token, refreshtoken } = res.data;
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("token", token);
+        localStorage.setItem("refresh-token", refreshtoken);
+      })
+      .catch((err) => {
+        const error = err.response && err.response.data;
+        setSendReq(true);
+        if (error && error.phone) {
+          setPhoneError(error.phone);
+          // console.log(error.phone);
+        }
+        if (error && error.password) {
+          setPassError(error.password);
+        }
+      });
+  };
+
   return (
     <View style={styles.v1}>
       <LazyLoadImage
@@ -83,11 +107,11 @@ const Login = () => {
         <Text
           style={{
             fontSize: 20,
-            fontWeight: "800",
+            fontWeight: "700",
             // fontFamily: "Roboto Slab",
             letterSpacing: 1,
             marginBottom: 20,
-            color: "#212121",
+            color: "#616161",
           }}>
           Welcome To Treazer Delivery
         </Text>
@@ -101,6 +125,7 @@ const Login = () => {
             marginTop: 10,
             width: "80%",
             color: "#212121",
+            backgroundColor: "#ffffff",
           }}
         />
         <HelperText type='error' visible={phoneErrors()}>
@@ -115,6 +140,7 @@ const Login = () => {
             height: 40,
             width: "80%",
             color: "#212121",
+            backgroundColor: "#ffffff",
           }}
         />
         <HelperText type='error' visible={passErrors()}>
@@ -122,7 +148,7 @@ const Login = () => {
         </HelperText>
         <Button
           mode='contained'
-          onPress={() => alert("I am pressed")}
+          onPress={login}
           style={{
             marginBottom: 10,
             width: "50%",
