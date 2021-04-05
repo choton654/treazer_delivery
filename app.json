@@ -1,0 +1,12 @@
+{
+  "name": "treazer_delivery",
+  "displayName": "treazer_delivery",
+  "expo": {
+    "name": "treazer_delivery",
+    "slug": "treazer_delivery",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
