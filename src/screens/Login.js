@@ -6,7 +6,9 @@ import {
   View,
   Dimensions,
   ActivityIndicator,
+  ScrollView,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { TextInput, Button, Divider, HelperText } from "react-native-paper";
@@ -18,6 +20,7 @@ const { height } = Dimensions.get("window");
 const Login = () => {
   const [phoneNo, setPhoneNo] = useState("");
   const [password, setPassword] = useState("");
+  const navigation = useNavigation();
   const passErrors = () => {
     return phoneNo.includes("#");
   };
@@ -98,71 +101,76 @@ const Login = () => {
       </View>
       <View
         style={{
-          //   justifyContent: "space-between",
-          alignItems: "center",
           marginVertical: 15,
           height: height * 0.35,
-          paddingHorizontal: 20,
+          width: "100%",
         }}>
-        <Text
-          style={{
-            fontSize: 20,
-            fontWeight: "700",
-            // fontFamily: "Roboto Slab",
-            letterSpacing: 1,
-            marginBottom: 20,
-            color: "#616161",
+        <ScrollView
+          contentContainerStyle={{
+            alignItems: "center",
+            justifyContent: "center",
+            width: "100%",
           }}>
-          Welcome To Treazer Delivery
-        </Text>
-        <TextInput
-          label='Phone'
-          value={phoneNo}
-          onChangeText={(text) => setPhoneNo(text)}
-          mode='outlined'
-          style={{
-            height: 40,
-            marginTop: 10,
-            width: "80%",
-            color: "#212121",
-            backgroundColor: "#ffffff",
-          }}
-        />
-        <HelperText type='error' visible={phoneErrors()}>
-          Phone no. doesn't contain spacial charecters
-        </HelperText>
-        <TextInput
-          label='Password'
-          value={password}
-          onChangeText={(text) => setPassword(text)}
-          mode='outlined'
-          style={{
-            height: 40,
-            width: "80%",
-            color: "#212121",
-            backgroundColor: "#ffffff",
-          }}
-        />
-        <HelperText type='error' visible={passErrors()}>
-          Phone no. doesn't contain spacial charecters
-        </HelperText>
-        <Button
-          mode='contained'
-          onPress={login}
-          style={{
-            marginBottom: 10,
-            width: "50%",
-            backgroundColor: "#4fc3f7",
-            boxShadow: "0px 2px 2px 2px #bdbdbd",
-          }}
-          labelStyle={{
-            color: "#ffffff",
-            fontWeight: "700",
-            fontSize: 15,
-            letterSpacing: 2,
-          }}>
-          Log-in
-        </Button>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: "700",
+              textAlign: "center",
+              letterSpacing: 1,
+              marginBottom: 20,
+              color: "#616161",
+            }}>
+            Welcome To Treazer Delivery
+          </Text>
+          <TextInput
+            label='Phone'
+            value={phoneNo}
+            onChangeText={(text) => setPhoneNo(text)}
+            mode='outlined'
+            style={{
+              height: 40,
+              marginTop: 10,
+              width: "80%",
+              color: "#212121",
+              backgroundColor: "#ffffff",
+            }}
+          />
+          <HelperText type='error' visible={phoneErrors()}>
+            Phone no. doesn't contain spacial charecters
+          </HelperText>
+          <TextInput
+            label='Password'
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+            mode='outlined'
+            style={{
+              height: 40,
+              width: "80%",
+              color: "#212121",
+              backgroundColor: "#ffffff",
+            }}
+          />
+          <HelperText type='error' visible={passErrors()}>
+            Phone no. doesn't contain spacial charecters
+          </HelperText>
+          <Button
+            mode='contained'
+            onPress={() => navigation.navigate("Details")}
+            style={{
+              marginBottom: 10,
+              width: "50%",
+              backgroundColor: "#4fc3f7",
+              boxShadow: "0px 2px 2px 2px #bdbdbd",
+            }}
+            labelStyle={{
+              color: "#ffffff",
+              fontWeight: "700",
+              fontSize: 15,
+              letterSpacing: 2,
+            }}>
+            Log-in
+          </Button>
+        </ScrollView>
       </View>
       <View
         style={{
@@ -203,6 +211,7 @@ const Login = () => {
         style={{
           marginHorizontal: "auto",
           alignItems: "center",
+          marginBottom: 20,
         }}>
         <Text
           style={{
