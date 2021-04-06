@@ -1,22 +1,24 @@
 import React, { useState } from "react";
-import { lazy } from "@loadable/component";
+// import { lazy } from "@loadable/component";
 import {
   StyleSheet,
   Text,
   View,
   Dimensions,
-  ActivityIndicator,
-  ScrollView,
+  // ActivityIndicator,
+  // ScrollView,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { TextInput, Button, Divider, HelperText } from "react-native-paper";
-import axios from "axios";
-import BASE_URL from "../api";
+// import axios from "axios";
+// import BASE_URL from "../api";
 const { height } = Dimensions.get("window");
 
 const MoreDetails = () => {
+  const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [referenceCode, setReferenceCode] = useState("");
   const [deliveryType, setDeliveryType] = useState("Self_Delivery");
@@ -153,7 +155,7 @@ const MoreDetails = () => {
         />
         <Button
           mode='contained'
-          // onPress={login}
+          onPress={() => navigation.navigate("Tabs", { screen: "Dashboard" })}
           style={{
             marginVertical: 20,
             width: "50%",

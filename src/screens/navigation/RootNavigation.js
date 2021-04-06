@@ -6,6 +6,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 // import Login from "../Login";
 const Login = lazy(() => import("../Login"));
 const MoreDetails = lazy(() => import("../MoreDetails"));
+const Tabs = lazy(() => import("./tabs"));
 const Stack = createStackNavigator();
 
 const RootNavigation = () => {
@@ -62,6 +63,31 @@ const RootNavigation = () => {
                 </View>
               }>
               <MoreDetails {...props} />
+            </Suspense>
+          )}
+        />
+        <Stack.Screen
+          name='Tabs'
+          component={(props) => (
+            <Suspense
+              fallback={
+                <View
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#ffffff",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}>
+                  <ActivityIndicator
+                    size='large'
+                    color='#82b1ff'
+                    style={{
+                      margin: "auto",
+                    }}
+                  />
+                </View>
+              }>
+              <Tabs {...props} />
             </Suspense>
           )}
         />
