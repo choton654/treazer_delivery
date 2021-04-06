@@ -12,9 +12,8 @@ const AssignedOrders = () => {
       }}>
       <View
         style={{
-          height: height * 0.25,
+          height: 220,
           paddingHorizontal: 10,
-          marginBottom: 40,
           marginTop: 10,
         }}>
         <View
@@ -130,10 +129,9 @@ const AssignedOrders = () => {
       </View>
       <View
         style={{
-          height: height * 0.25,
+          height: 220,
           paddingHorizontal: 10,
           marginTop: 10,
-          marginBottom: 40,
         }}>
         <View
           style={{
@@ -248,10 +246,9 @@ const AssignedOrders = () => {
       </View>
       <View
         style={{
-          height: height * 0.25,
+          height: 220,
           paddingHorizontal: 10,
           marginTop: 10,
-          marginBottom: 40,
         }}>
         <View
           style={{

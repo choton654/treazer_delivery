@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Dimensions } from "react-native";
+import { StyleSheet, ScrollView, View, Dimensions } from "react-native";
 import {
   Button,
   TextInput,
@@ -46,12 +46,12 @@ const Signup = ({ hideDialog, visible }) => {
       });
   };
   return (
-    <View>
-      <Portal>
-        <Dialog
-          visible={visible}
-          onDismiss={hideDialog}
-          style={{ height: height * 0.8 }}>
+    <Portal>
+      <Dialog
+        visible={visible}
+        onDismiss={hideDialog}
+        style={{ height: height * 0.75 }}>
+        <ScrollView>
           <Dialog.Title style={{ textAlign: "center" }}>
             Sign Up Here
           </Dialog.Title>
@@ -154,9 +154,9 @@ const Signup = ({ hideDialog, visible }) => {
               Cancel
             </Button>
           </Dialog.Actions>
-        </Dialog>
-      </Portal>
-    </View>
+        </ScrollView>
+      </Dialog>
+    </Portal>
   );
 };
 
