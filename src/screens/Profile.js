@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { Button } from "react-native-paper";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
@@ -53,12 +53,13 @@ const Profile = () => {
           width: "100%",
           padding: 30,
         }}>
-        <Image
+        <LazyLoadImage
           style={{
             width: 100,
             height: 100,
           }}
-          source={require("../assets/logo/man.png")}
+          src={require("../assets/logo/man.png")}
+          effect='blur'
         />
         <Text
           style={{
