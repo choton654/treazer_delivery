@@ -41,7 +41,7 @@ const Dashboard = () => {
               marginTop: 10,
               resizeMode: "cover",
               borderRadius: 30,
-              boxShadow: "0px 2px 5px 1px #546e7a",
+              boxShadow: "0px 2px 10px 1px #757575",
             }}
             src={require("../assets/logo/delivery_treazer_logo.png")}
             effect='blur'
@@ -53,6 +53,7 @@ const Dashboard = () => {
               fontWeight: "700",
               fontSize: 20,
               letterSpacing: 1,
+              marginVertical: "auto",
             }}>
             Dashboard
           </Text>

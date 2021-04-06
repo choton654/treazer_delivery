@@ -1,8 +1,8 @@
 import React from "react";
-import { StyleSheet, Text, View, ScrollView, Dimensions } from "react-native";
-const { height } = Dimensions.get("window");
-import Ionicons from "react-native-vector-icons/Ionicons";
-import { Button } from "react-native-paper";
+import { StyleSheet, Text, View, ScrollView } from "react-native";
+// const { height } = Dimensions.get("window");
+// import Ionicons from "react-native-vector-icons/Ionicons";
+// import { Button } from "react-native-paper";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 const CompleteOrder = () => {
@@ -30,7 +30,7 @@ const CompleteOrder = () => {
               marginTop: 10,
               resizeMode: "cover",
               borderRadius: 30,
-              boxShadow: "0px 2px 5px 1px #546e7a",
+              boxShadow: "0px 2px 10px 1px #757575",
             }}
             src={require("../assets/logo/delivery_treazer_logo.png")}
             effect='blur'
