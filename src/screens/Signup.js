@@ -50,7 +50,7 @@ const Signup = ({ hideDialog, visible }) => {
       <Dialog
         visible={visible}
         onDismiss={hideDialog}
-        style={{ height: height * 0.75 }}>
+        style={{ height: height * 0.8 }}>
         <ScrollView>
           <Dialog.Title style={{ textAlign: "center" }}>
             Sign Up Here
