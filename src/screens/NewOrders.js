@@ -3,6 +3,8 @@ import { StyleSheet, Text, View, ScrollView, Dimensions } from "react-native";
 const { height } = Dimensions.get("window");
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Button } from "react-native-paper";
+import axios from "axios";
+import BASE_URL from "../api";
 const NewOrders = () => {
   return (
     <ScrollView

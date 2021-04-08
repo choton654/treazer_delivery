@@ -11,46 +11,64 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
-import { TextInput, Button, Divider, HelperText } from "react-native-paper";
+import {
+  TextInput,
+  Button,
+  Divider,
+  HelperText,
+  ActivityIndicator as ActivityIndicator2,
+} from "react-native-paper";
 import axios from "axios";
 import BASE_URL from "../api";
 const Signup = lazy(() => import("./Signup"));
 const { height } = Dimensions.get("window");
+import { userState } from "./context/userContext";
 
 const Login = () => {
+  const { dispatch } = userState();
+
   const [phoneNo, setPhoneNo] = useState("");
   const [password, setPassword] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const [loginReq, setLoginReq] = useState(true);
   const navigation = useNavigation();
-  const passErrors = () => {
-    return phoneNo.includes("#");
-  };
+
   const phoneErrors = () => {
-    return phoneNo.includes("#");
+    let phoneMatch = /^\d{10}$/;
+    return !phoneMatch.test(phoneNo);
   };
   const [visible, setVisible] = React.useState(false);
   const showDialog = () => setVisible(true);
   const hideDialog = () => setVisible(false);
 
   const login = () => {
-    axios
-      .post(`${BASE_URL}/api/user/login`, { phone: phoneNo, password })
-      .then((res) => {
-        const { user, token, refreshtoken } = res.data;
-        localStorage.setItem("user", JSON.stringify(user));
-        localStorage.setItem("token", token);
-        localStorage.setItem("refresh-token", refreshtoken);
-      })
-      .catch((err) => {
-        const error = err.response && err.response.data;
-        setSendReq(true);
-        if (error && error.phone) {
-          setPhoneError(error.phone);
-          // console.log(error.phone);
-        }
-        if (error && error.password) {
-          setPassError(error.password);
-        }
-      });
+    if (!phoneErrors() && !phoneError && !passwordError) {
+      setLoginReq(false);
+      axios
+        .post(`${BASE_URL}/api/user/login`, { phone: phoneNo, password })
+        .then((res) => {
+          const { user, token, refreshtoken } = res.data;
+          dispatch({ type: "ADD_USER", payload: user });
+          localStorage.setItem("user", JSON.stringify(user));
+          localStorage.setItem("token", token);
+          localStorage.setItem("refresh-token", refreshtoken);
+          setLoginReq(true);
+          navigation.navigate("Details");
+        })
+        .catch((err) => {
+          const error = err.response && err.response.data;
+          setLoginReq(true);
+          if (error && error.phone) {
+            setPhoneError(error.phone);
+            // console.log(error.phone);
+          }
+          if (error && error.password) {
+            setPasswordError(error.password);
+          }
+        });
+    }
   };
 
   return (
@@ -125,7 +143,12 @@ const Login = () => {
           <TextInput
             label='Phone'
             value={phoneNo}
-            onChangeText={(text) => setPhoneNo(text)}
+            error={phoneError ? true : false}
+            onChangeText={(text) => {
+              setPhoneNo(text);
+              setPasswordError("");
+              setPhoneError("");
+            }}
             mode='outlined'
             style={{
               height: 40,
@@ -135,13 +158,20 @@ const Login = () => {
               backgroundColor: "#ffffff",
             }}
           />
-          <HelperText type='error' visible={phoneErrors()}>
-            Phone no. doesn't contain spacial charecters
+          <HelperText
+            type={phoneErrors() ? `info` : `error`}
+            visible={phoneErrors() || phoneError ? true : false}>
+            {phoneError ? phoneError : `Phone no. must contain 10 digits `}
           </HelperText>
           <TextInput
             label='Password'
             value={password}
-            onChangeText={(text) => setPassword(text)}
+            error={passwordError ? true : false}
+            onChangeText={(text) => {
+              setPassword(text);
+              setPasswordError("");
+              setPhoneError("");
+            }}
             mode='outlined'
             style={{
               height: 40,
@@ -150,26 +180,45 @@ const Login = () => {
               backgroundColor: "#ffffff",
             }}
           />
-          <HelperText type='error' visible={passErrors()}>
-            Phone no. doesn't contain spacial charecters
+          <HelperText type='error' visible={passwordError ? true : false}>
+            {passwordError}
           </HelperText>
-          <Button
-            mode='contained'
-            onPress={() => navigation.navigate("Details")}
-            style={{
-              marginBottom: 10,
-              width: "50%",
-              backgroundColor: "#4fc3f7",
-              boxShadow: "0px 2px 2px 2px #bdbdbd",
-            }}
-            labelStyle={{
-              color: "#ffffff",
-              fontWeight: "700",
-              fontSize: 15,
-              letterSpacing: 2,
-            }}>
-            Log-in
-          </Button>
+          {loginReq ? (
+            <Button
+              mode='contained'
+              onPress={login}
+              disabled={
+                !phoneErrors() && !phoneError && !passwordError ? false : true
+              }
+              style={{
+                marginBottom: 10,
+                width: "50%",
+                backgroundColor: "#4fc3f7",
+                boxShadow: "0px 2px 2px 2px #bdbdbd",
+              }}
+              labelStyle={{
+                color: "#ffffff",
+                fontWeight: "700",
+                fontSize: 15,
+                letterSpacing: 2,
+              }}>
+              Log-in
+            </Button>
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: "#ffffff",
+                justifyContent: "center",
+                alignItems: "center",
+              }}>
+              <ActivityIndicator2
+                animating={true}
+                color='#82b1ff'
+                size='small'
+              />
+            </View>
+          )}
         </ScrollView>
       </View>
       <View

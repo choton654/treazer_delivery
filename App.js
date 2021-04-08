@@ -5,10 +5,13 @@ const RootNavigation = loadable(() =>
   import("./src/screens/navigation/RootNavigation")
 );
 import { Provider as PaperProvider } from "react-native-paper";
+import { UserContextProvider } from "./src/screens/context/userContext";
 const App = () => {
   return (
     <PaperProvider>
-      <RootNavigation />
+      <UserContextProvider>
+        <RootNavigation />
+      </UserContextProvider>
     </PaperProvider>
   );
 };
