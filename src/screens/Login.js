@@ -55,7 +55,17 @@ const Login = () => {
           localStorage.setItem("token", token);
           localStorage.setItem("refresh-token", refreshtoken);
           setLoginReq(true);
-          navigation.navigate("Details");
+          if (user.deliveryType === "admin") {
+            navigation.navigate("Account_Hold");
+          } else if (
+            user.deliveryType === "self" ||
+            user.deliveryType === "partner"
+          ) {
+            navigation.navigate("Tabs", { screen: "Profile" });
+          } else if (user.deliveryType === "none") {
+            console.log("none");
+            navigation.navigate("Details");
+          }
         })
         .catch((err) => {
           const error = err.response && err.response.data;
@@ -214,6 +224,7 @@ const Login = () => {
             <View
               style={{
                 flex: 1,
+                marginVertical: 10,
                 backgroundColor: "#ffffff",
                 justifyContent: "center",
                 alignItems: "center",

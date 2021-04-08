@@ -6,8 +6,12 @@ const Dashboard = lazy(() => import("../Dashboard"));
 const CompleteOrder = lazy(() => import("../CompleteOrder"));
 const Profile = lazy(() => import("../Profile"));
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { userState } from "../context/userContext";
+
 const Tab = createBottomTabNavigator();
 const Tabs = () => {
+  const { state } = userState();
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -87,31 +91,33 @@ const Tabs = () => {
           </Suspense>
         )}
       />
-      <Tab.Screen
-        name='Profile'
-        component={(props) => (
-          <Suspense
-            fallback={
-              <View
-                style={{
-                  flex: 1,
-                  backgroundColor: "#ffffff",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}>
-                <ActivityIndicator
-                  size='large'
-                  color='#82b1ff'
+      {state.isLogin && (
+        <Tab.Screen
+          name='Profile'
+          component={(props) => (
+            <Suspense
+              fallback={
+                <View
                   style={{
-                    margin: "auto",
-                  }}
-                />
-              </View>
-            }>
-            <Profile {...props} />
-          </Suspense>
-        )}
-      />
+                    flex: 1,
+                    backgroundColor: "#ffffff",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}>
+                  <ActivityIndicator
+                    size='large'
+                    color='#82b1ff'
+                    style={{
+                      margin: "auto",
+                    }}
+                  />
+                </View>
+              }>
+              <Profile {...props} />
+            </Suspense>
+          )}
+        />
+      )}
     </Tab.Navigator>
   );
 };

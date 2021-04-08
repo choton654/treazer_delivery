@@ -56,7 +56,16 @@ const MoreDetails = () => {
         .then((res) => {
           const { updatedUser } = res.data;
           dispatch({ type: "USER_PROFILE", payload: updatedUser });
+          localStorage.setItem("user", JSON.stringify(updatedUser));
           setDeliveryReq(true);
+          if (user.deliveryType === "admin") {
+            navigation.navigate("Account_Hold");
+          } else if (
+            user.deliveryType === "self" ||
+            user.deliveryType === "partner"
+          ) {
+            navigation.navigate("Tabs", { screen: "Profile" });
+          }
         })
         .catch((err) => {
           const error = err.response && err.response.data;
@@ -216,6 +225,7 @@ const MoreDetails = () => {
         ) : (
           <View
             style={{
+              marginVertical: 10,
               width: "50%",
               backgroundColor: "#ffffff",
               justifyContent: "center",

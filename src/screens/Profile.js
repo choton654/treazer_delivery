@@ -3,7 +3,10 @@ import { StyleSheet, Text, View } from "react-native";
 import { Button } from "react-native-paper";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
+import { userState } from "./context/userContext";
 const Profile = () => {
+  const { dispatch } = userState();
+
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("refresh-token");
