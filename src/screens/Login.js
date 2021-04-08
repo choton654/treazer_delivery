@@ -164,6 +164,7 @@ const Login = () => {
             {phoneError ? phoneError : `Phone no. must contain 10 digits `}
           </HelperText>
           <TextInput
+            secureTextEntry={true}
             label='Password'
             value={password}
             error={passwordError ? true : false}
@@ -187,14 +188,19 @@ const Login = () => {
             <Button
               mode='contained'
               onPress={login}
+              compact={true}
               disabled={
                 !phoneErrors() && !phoneError && !passwordError ? false : true
               }
               style={{
-                marginBottom: 10,
+                marginVertical: 10,
                 width: "50%",
-                backgroundColor: "#4fc3f7",
-                boxShadow: "0px 2px 2px 2px #bdbdbd",
+                backgroundColor: `${
+                  !phoneErrors() && !phoneError && !passwordError
+                    ? "#81d4fa"
+                    : "#bdbdbd"
+                }`,
+                boxShadow: "0px 2px 5px 2px #bdbdbd",
               }}
               labelStyle={{
                 color: "#ffffff",

@@ -6,6 +6,7 @@ import {
   HelperText,
   Dialog,
   Portal,
+  ActivityIndicator,
 } from "react-native-paper";
 import axios from "axios";
 import BASE_URL from "../api";
@@ -16,34 +17,55 @@ const Signup = ({ hideDialog, visible }) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [phoneNo, setPhoneNo] = useState("");
+  const [signupReq, setSignupReq] = useState(true);
+  const [phoneError, setPhoneError] = useState("");
 
   const fullnameErrors = () => {
-    return phoneNo.includes("#");
+    // let fullnameRegEx = /^[A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*$/;
+    let fullnameRegEx = /^(?=[a-zA-Z0-9._]{6,50}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
+    return !fullnameRegEx.test(fullname);
   };
   const passwordErrors = () => {
-    return phoneNo.includes("#");
+    return password === "";
   };
   const confirmPasswordErrors = () => {
-    return phoneNo.includes("#");
+    return password !== confirmPassword;
   };
   const phoneErrors = () => {
-    return phoneNo.includes("#");
+    let phoneMatch = /^\d{10}$/;
+    return !phoneMatch.test(phoneNo);
   };
   const signUp = () => {
-    axios
-      .post(`${BASE_URL}/api/user/signup`, {
-        username: fullname,
-        password,
-        phone: phoneNo,
-      })
-      .then((res) => {
-        console.log(res.data);
-        hideDialog();
-      })
-      .catch((err) => {
-        const error = err.response && err.response.data.username;
-        console.log(error);
-      });
+    if (
+      !fullnameErrors() &&
+      !passwordErrors() &&
+      !confirmPasswordErrors() &&
+      !phoneErrors()
+    ) {
+      setSignupReq(false);
+      axios
+        .post(`${BASE_URL}/api/user/signup`, {
+          username: fullname,
+          password,
+          phone: phoneNo,
+        })
+        .then((res) => {
+          console.log(res.data);
+          setSignupReq(true);
+          hideDialog();
+        })
+        .catch((err) => {
+          let error;
+          if (err.response && err.response.data.username) {
+            error = err.response && err.response.data.username;
+          } else {
+            error = err.response && err.response.data;
+            setPhoneError(error);
+          }
+          setSignupReq(true);
+          console.log(error);
+        });
+    }
   };
   return (
     <Portal>
@@ -55,11 +77,14 @@ const Signup = ({ hideDialog, visible }) => {
           <Dialog.Title style={{ textAlign: "center" }}>
             Sign Up Here
           </Dialog.Title>
-          <Dialog.Content>
+          <Dialog.Content style={{ paddingBottom: 10 }}>
             <TextInput
               label='Full Name'
               value={fullname}
-              onChangeText={(text) => setFullName(text)}
+              onChangeText={(text) => {
+                setPhoneError("");
+                setFullName(text);
+              }}
               mode='outlined'
               style={{
                 height: 40,
@@ -69,13 +94,20 @@ const Signup = ({ hideDialog, visible }) => {
                 backgroundColor: "#ffffff",
               }}
             />
-            <HelperText type='error' visible={fullnameErrors()}>
-              Phone no. doesn't contain spacial charecters
+            <HelperText
+              type='info'
+              visible={fullnameErrors()}
+              style={{ marginBottom: 10 }}>
+              Fullname must contain 6 charecters
             </HelperText>
             <TextInput
+              secureTextEntry={true}
               label='Password'
               value={password}
-              onChangeText={(text) => setPassword(text)}
+              onChangeText={(text) => {
+                setPassword(text);
+                setPhoneError("");
+              }}
               mode='outlined'
               style={{
                 height: 40,
@@ -84,13 +116,20 @@ const Signup = ({ hideDialog, visible }) => {
                 backgroundColor: "#ffffff",
               }}
             />
-            <HelperText type='error' visible={passwordErrors()}>
-              Phone no. doesn't contain spacial charecters
+            <HelperText
+              type='nfo'
+              visible={passwordErrors()}
+              style={{ marginBottom: 10 }}>
+              Put a password
             </HelperText>
             <TextInput
+              secureTextEntry={true}
               label='Confirm Password'
               value={confirmPassword}
-              onChangeText={(text) => setConfirmPassword(text)}
+              onChangeText={(text) => {
+                setConfirmPassword(text);
+                setPhoneError("");
+              }}
               mode='outlined'
               style={{
                 height: 40,
@@ -99,13 +138,20 @@ const Signup = ({ hideDialog, visible }) => {
                 backgroundColor: "#ffffff",
               }}
             />
-            <HelperText type='error' visible={confirmPasswordErrors()}>
-              Phone no. doesn't contain spacial charecters
+            <HelperText
+              type='info'
+              visible={confirmPasswordErrors()}
+              style={{ marginBottom: 10 }}>
+              Re-type password
             </HelperText>
             <TextInput
               label='Phone'
               value={phoneNo}
-              onChangeText={(text) => setPhoneNo(text)}
+              error={phoneError ? true : false}
+              onChangeText={(text) => {
+                setPhoneNo(text);
+                setPhoneError("");
+              }}
               mode='outlined'
               style={{
                 height: 40,
@@ -114,35 +160,71 @@ const Signup = ({ hideDialog, visible }) => {
                 backgroundColor: "#ffffff",
               }}
             />
-            <HelperText type='error' visible={phoneErrors()}>
-              Phone no. doesn't contain spacial charecters
+            <HelperText
+              type={phoneError ? "error" : "info"}
+              visible={phoneErrors() || phoneError ? true : false}
+              style={{ marginBottom: 10 }}>
+              {phoneError ? phoneError : "Phone no. must have 10 digits"}
             </HelperText>
           </Dialog.Content>
           <Dialog.Actions style={{ justifyContent: "space-around" }}>
-            <Button
-              onPress={signUp}
-              style={{
-                marginBottom: 10,
-                width: "40%",
-                backgroundColor: "#2196f3",
-                boxShadow: "0px 2px 2px 2px #bdbdbd",
-              }}
-              labelStyle={{
-                color: "#ffffff",
-                fontWeight: "700",
-                fontSize: 15,
-                letterSpacing: 2,
-              }}
-              contentStyle={{ backgroundColor: "#4fc3f7" }}>
-              Sign up
-            </Button>
+            {signupReq ? (
+              <Button
+                onPress={signUp}
+                disabled={
+                  fullnameErrors() &&
+                  passwordErrors() &&
+                  confirmPasswordErrors() &&
+                  phoneErrors()
+                    ? true
+                    : false
+                }
+                style={{
+                  marginBottom: 10,
+                  width: "40%",
+                  boxShadow: "0px 2px 10px 2px #bdbdbd",
+                }}
+                labelStyle={{
+                  color: "#ffffff",
+                  fontWeight: "700",
+                  fontSize: 15,
+                  letterSpacing: 2,
+                }}
+                contentStyle={{
+                  backgroundColor: `${
+                    !fullnameErrors() &&
+                    !passwordErrors() &&
+                    !confirmPasswordErrors() &&
+                    !phoneErrors()
+                      ? "#4fc3f7"
+                      : "#bdbdbd"
+                  }`,
+                }}>
+                Sign up
+              </Button>
+            ) : (
+              <View
+                style={{
+                  width: "40%",
+                  backgroundColor: "#ffffff",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}>
+                <ActivityIndicator
+                  animating={true}
+                  color='#82b1ff'
+                  size='small'
+                />
+              </View>
+            )}
+
             <Button
               onPress={hideDialog}
+              disabled={signupReq ? false : true}
               style={{
                 marginBottom: 10,
                 width: "40%",
-                backgroundColor: "#2196f3",
-                boxShadow: "0px 2px 2px 2px #bdbdbd",
+                boxShadow: "0px 2px 10px 2px #bdbdbd",
               }}
               labelStyle={{
                 color: "#ffffff",
@@ -150,7 +232,9 @@ const Signup = ({ hideDialog, visible }) => {
                 fontSize: 15,
                 letterSpacing: 2,
               }}
-              contentStyle={{ backgroundColor: "#4fc3f7" }}>
+              contentStyle={{
+                backgroundColor: `${signupReq ? "#4fc3f7" : "#bdbdbd"}`,
+              }}>
               Cancel
             </Button>
           </Dialog.Actions>

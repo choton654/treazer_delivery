@@ -106,7 +106,7 @@ const MoreDetails = () => {
             backgroundColor: "#ffffff",
           }}
         />
-        <HelperText type='error' visible={emailErrors()}>
+        <HelperText type='info' visible={emailErrors()}>
           Email must contain '@' symbol
         </HelperText>
         <Picker
