@@ -1,12 +1,12 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { Button } from "react-native-paper";
+import { Button, ActivityIndicator } from "react-native-paper";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { userState } from "./context/userContext";
-const Profile = () => {
-  const { dispatch } = userState();
 
+const Profile = () => {
+  const { state, dispatch } = userState();
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("refresh-token");
@@ -54,6 +54,7 @@ const Profile = () => {
           </Text>
         </View>
       </View>
+
       <View
         style={{
           flex: 1,
@@ -79,7 +80,7 @@ const Profile = () => {
             textAlign: "center",
             marginVertical: 20,
           }}>
-          Chaittyanya Mahaprabhu
+          {state.user && state.user.username}
         </Text>
         <View style={{ padding: 10 }}>
           <Text
@@ -91,7 +92,10 @@ const Profile = () => {
               textAlign: "center",
               marginVertical: 5,
             }}>
-            Phone No:<Text style={{ marginHorizontal: 10 }}>74562136985</Text>
+            Phone No:
+            <Text style={{ marginHorizontal: 10 }}>
+              {state.user && state.user.mobile_no}
+            </Text>
           </Text>
           <Text
             style={{
@@ -103,7 +107,9 @@ const Profile = () => {
               marginVertical: 5,
             }}>
             Email ID:
-            <Text style={{ marginHorizontal: 10 }}>abc@example.com</Text>
+            <Text style={{ marginHorizontal: 10 }}>
+              {state.user && state.user.email}
+            </Text>
           </Text>
           <Text
             style={{
@@ -114,7 +120,12 @@ const Profile = () => {
               textAlign: "center",
               marginVertical: 5,
             }}>
-            Reference ID:<Text style={{ marginHorizontal: 10 }}>285469</Text>
+            Reference ID:
+            <Text style={{ marginHorizontal: 10 }}>
+              {state.user &&
+                state.user.referenceCode &&
+                state.user.referenceCode}
+            </Text>
           </Text>
         </View>
         <Button

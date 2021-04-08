@@ -55,16 +55,12 @@ const Login = () => {
           localStorage.setItem("token", token);
           localStorage.setItem("refresh-token", refreshtoken);
           setLoginReq(true);
-          if (user.deliveryType === "admin") {
+          if (user.isAdminAccountHold) {
             navigation.navigate("Account_Hold");
-          } else if (
-            user.deliveryType === "self" ||
-            user.deliveryType === "partner"
-          ) {
-            navigation.navigate("Tabs", { screen: "Profile" });
           } else if (user.deliveryType === "none") {
-            console.log("none");
             navigation.navigate("Details");
+          } else {
+            navigation.navigate("Tabs");
           }
         })
         .catch((err) => {

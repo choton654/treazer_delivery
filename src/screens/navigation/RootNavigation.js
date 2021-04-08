@@ -7,13 +7,14 @@ import { createStackNavigator } from "@react-navigation/stack";
 const Login = lazy(() => import("../Login"));
 const MoreDetails = lazy(() => import("../MoreDetails"));
 const AccountHold = lazy(() => import("../AccountHold"));
-
 const Tabs = lazy(() => import("./tabs"));
+const Loading = lazy(() => import("./Loading"));
+
 const Stack = createStackNavigator();
 import { userState } from "../context/userContext";
+
 const RootNavigation = () => {
   const { state } = userState();
-
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -72,7 +73,33 @@ const RootNavigation = () => {
               </Suspense>
             )}
           />
-        ) : state.user && state.user.deliveryType !== "admin" ? (
+        ) : state.user && state.user.isAdminAccountHold === true ? (
+          <Stack.Screen
+            name='Account_Hold'
+            component={(props) => (
+              <Suspense
+                fallback={
+                  <View
+                    style={{
+                      flex: 1,
+                      backgroundColor: "#ffffff",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}>
+                    <ActivityIndicator
+                      size='large'
+                      color='#82b1ff'
+                      style={{
+                        margin: "auto",
+                      }}
+                    />
+                  </View>
+                }>
+                <AccountHold {...props} />
+              </Suspense>
+            )}
+          />
+        ) : state.user && state.user.isAdminAccountHold === false ? (
           <Stack.Screen
             name='Tabs'
             component={(props) => (
@@ -100,7 +127,7 @@ const RootNavigation = () => {
           />
         ) : (
           <Stack.Screen
-            name='Account_Hold'
+            name='Loading'
             component={(props) => (
               <Suspense
                 fallback={
@@ -120,7 +147,7 @@ const RootNavigation = () => {
                     />
                   </View>
                 }>
-                <AccountHold {...props} />
+                <Loading {...props} />
               </Suspense>
             )}
           />

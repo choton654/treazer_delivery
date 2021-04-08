@@ -9,6 +9,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { userState } from "../context/userContext";
 
 const Tab = createBottomTabNavigator();
+
 const Tabs = () => {
   const { state } = userState();
 

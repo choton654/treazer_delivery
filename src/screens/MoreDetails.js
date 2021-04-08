@@ -58,13 +58,10 @@ const MoreDetails = () => {
           dispatch({ type: "USER_PROFILE", payload: updatedUser });
           localStorage.setItem("user", JSON.stringify(updatedUser));
           setDeliveryReq(true);
-          if (user.deliveryType === "admin") {
+          if (user.isAdminAccountHold) {
             navigation.navigate("Account_Hold");
-          } else if (
-            user.deliveryType === "self" ||
-            user.deliveryType === "partner"
-          ) {
-            navigation.navigate("Tabs", { screen: "Profile" });
+          } else {
+            navigation.navigate("Tabs");
           }
         })
         .catch((err) => {
