@@ -8,23 +8,61 @@ import {
   // ActivityIndicator,
   // ScrollView,
 } from "react-native";
+import { userState } from "./context/userContext";
 import { useNavigation } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
-import { TextInput, Button, Divider, HelperText } from "react-native-paper";
-// import axios from "axios";
-// import BASE_URL from "../api";
+import {
+  TextInput,
+  Button,
+  Divider,
+  HelperText,
+  ActivityIndicator,
+} from "react-native-paper";
+import axios from "axios";
+import BASE_URL from "../api";
 const { height } = Dimensions.get("window");
 
 const MoreDetails = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [referenceCode, setReferenceCode] = useState("");
-  const [deliveryType, setDeliveryType] = useState("Self_Delivery");
+  const [deliveryType, setDeliveryType] = useState("Self");
   const [disable, setDisable] = useState(false);
+  const [deliveryReq, setDeliveryReq] = useState(true);
+
+  const { dispatch } = userState();
+  const token = localStorage.getItem("token");
+  const refreshtoken = localStorage.getItem("refresh-token");
   const emailErrors = () => {
     return !email.includes("@");
+  };
+
+  const deliveryRegister = () => {
+    if (!emailErrors()) {
+      setDeliveryReq(false);
+      axios
+        .post(
+          `${BASE_URL}/api/user/deliveryRegistration`,
+          { email, deliveryType, referenceCode },
+          {
+            headers: {
+              "x-token": token,
+              "x-refresh-token": refreshtoken,
+            },
+          }
+        )
+        .then((res) => {
+          const { updatedUser } = res.data;
+          dispatch({ type: "USER_PROFILE", payload: updatedUser });
+          setDeliveryReq(true);
+        })
+        .catch((err) => {
+          const error = err.response && err.response.data;
+          console.log(error);
+        });
+    }
   };
 
   return (
@@ -112,7 +150,7 @@ const MoreDetails = () => {
         <Picker
           selectedValue={deliveryType}
           onValueChange={(itemValue, itemIndex) => {
-            if (itemValue === "Delivery_Partner") {
+            if (itemValue === "partner") {
               setDisable(true);
             } else {
               setDisable(false);
@@ -135,9 +173,9 @@ const MoreDetails = () => {
             fontSize: 15,
             fontFamily: "Open Sans",
           }}>
-          <Picker.Item label='Self Delivery' value='Self_Delivery' />
-          <Picker.Item label='Delivery Admin' value='Delivery_Admin' />
-          <Picker.Item label='Delivery Partner' value='Delivery_Partner' />
+          <Picker.Item label='Self Delivery' value='self' />
+          <Picker.Item label='Delivery Admin' value='admin' />
+          <Picker.Item label='Delivery Partner' value='partner' />
         </Picker>
         <TextInput
           label='Reference Code'
@@ -153,23 +191,39 @@ const MoreDetails = () => {
             backgroundColor: "#ffffff",
           }}
         />
-        <Button
-          mode='contained'
-          onPress={() => navigation.navigate("Tabs", { screen: "Dashboard" })}
-          style={{
-            marginVertical: 20,
-            width: "50%",
-            backgroundColor: "#4fc3f7",
-            boxShadow: "0px 2px 2px 2px #bdbdbd",
-          }}
-          labelStyle={{
-            color: "#ffffff",
-            fontWeight: "700",
-            fontSize: 15,
-            letterSpacing: 2,
-          }}>
-          Get Started
-        </Button>
+        {deliveryReq ? (
+          <Button
+            mode='contained'
+            disabled={emailErrors() ? true : false}
+            onPress={() => {
+              deliveryRegister();
+              navigation.navigate("Tabs", { screen: "Profile" });
+            }}
+            style={{
+              marginVertical: 20,
+              width: "50%",
+              backgroundColor: `${emailErrors() ? "#bdbdbd" : "#4fc3f7"}`,
+              boxShadow: "0px 2px 5px 2px #bdbdbd",
+            }}
+            labelStyle={{
+              color: "#ffffff",
+              fontWeight: "700",
+              fontSize: 15,
+              letterSpacing: 2,
+            }}>
+            Get Started
+          </Button>
+        ) : (
+          <View
+            style={{
+              width: "50%",
+              backgroundColor: "#ffffff",
+              justifyContent: "center",
+              alignItems: "center",
+            }}>
+            <ActivityIndicator animating={true} color='#82b1ff' size='small' />
+          </View>
+        )}
       </View>
     </View>
   );

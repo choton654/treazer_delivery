@@ -4,6 +4,12 @@ import { Button } from "react-native-paper";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 const Profile = () => {
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("refresh-token");
+    dispatch({ type: "LOGOUT_USER" });
+  };
+
   return (
     <View style={styles.v1}>
       <View
@@ -110,7 +116,7 @@ const Profile = () => {
         </View>
         <Button
           mode='contained'
-          // onPress={() => navigation.navigate("Details")}
+          onPress={logout}
           style={{
             marginVertical: 20,
             marginHorizontal: "auto",

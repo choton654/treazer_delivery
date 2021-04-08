@@ -8,39 +8,43 @@ const Login = lazy(() => import("../Login"));
 const MoreDetails = lazy(() => import("../MoreDetails"));
 const Tabs = lazy(() => import("./tabs"));
 const Stack = createStackNavigator();
-
+import { userState } from "../context/userContext";
 const RootNavigation = () => {
+  const { state } = userState();
   return (
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
         }}>
-        <Stack.Screen
-          name='Home'
-          component={(props) => (
-            <Suspense
-              fallback={
-                <View
-                  style={{
-                    flex: 1,
-                    backgroundColor: "#ffffff",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}>
-                  <ActivityIndicator
-                    size='large'
-                    color='#82b1ff'
+        {!state.isLogin && (
+          <Stack.Screen
+            name='Home'
+            component={(props) => (
+              <Suspense
+                fallback={
+                  <View
                     style={{
-                      margin: "auto",
-                    }}
-                  />
-                </View>
-              }>
-              <Login {...props} />
-            </Suspense>
-          )}
-        />
+                      flex: 1,
+                      backgroundColor: "#ffffff",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}>
+                    <ActivityIndicator
+                      size='large'
+                      color='#82b1ff'
+                      style={{
+                        margin: "auto",
+                      }}
+                    />
+                  </View>
+                }>
+                <Login {...props} />
+              </Suspense>
+            )}
+          />
+        )}
+
         <Stack.Screen
           name='Details'
           component={(props) => (
