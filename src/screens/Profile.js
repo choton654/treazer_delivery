@@ -4,13 +4,16 @@ import { Button } from "react-native-paper";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { userState } from "./context/userContext";
+import { orderState } from "./context/orderContext";
 
 const Profile = () => {
   const { state, dispatch } = userState();
+  const { dispatch: orderDispatch } = orderState();
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("refresh-token");
     dispatch({ type: "LOGOUT_USER" });
+    orderDispatch({ type: "EMPTY_ORDER" });
   };
 
   return (
@@ -111,7 +114,7 @@ const Profile = () => {
               {state.user && state.user.email}
             </Text>
           </Text>
-          {state.user && state.user.referenceCode && (
+          {state.user && state.user.referenceCode !== 0 && (
             <Text
               style={{
                 color: "#212121",

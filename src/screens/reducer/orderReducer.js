@@ -1,5 +1,5 @@
 export const initialState = {
-  order: null,
+  orders: null,
   error: null,
 };
 
@@ -15,6 +15,12 @@ export const reducer = (state, action) => {
       return {
         ...state,
         error: action.payload,
+      };
+
+    case "EMPTY_ORDER":
+      return {
+        ...state,
+        orders: null,
       };
   }
 };

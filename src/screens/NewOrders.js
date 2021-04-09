@@ -19,7 +19,7 @@ const NewOrders = () => {
   const deliveryType = user && user.deliveryType;
 
   useEffect(() => {
-    if (!odrState.orders) {
+    if (!odrState.orders || odrState.orders.length === 0) {
       getAllOrders();
     }
   }, []);
