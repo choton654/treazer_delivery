@@ -225,21 +225,23 @@ const MoreDetails = () => {
             <Picker.Item label='Delivery Partner' value='partner' />
           </Picker>
         )}
+        {!restaurentId && (
+          <TextInput
+            label='Reference Code'
+            disabled={disable ? false : true}
+            value={referenceCode}
+            onChangeText={(text) => setReferenceCode(parseInt(text))}
+            mode='outlined'
+            style={{
+              height: 40,
+              marginTop: 10,
+              width: "80%",
+              color: "#212121",
+              backgroundColor: "#ffffff",
+            }}
+          />
+        )}
 
-        <TextInput
-          label='Reference Code'
-          disabled={disable ? false : true}
-          value={referenceCode}
-          onChangeText={(text) => setReferenceCode(parseInt(text))}
-          mode='outlined'
-          style={{
-            height: 40,
-            marginTop: 10,
-            width: "80%",
-            color: "#212121",
-            backgroundColor: "#ffffff",
-          }}
-        />
         {deliveryReq ? (
           <Button
             mode='contained'
