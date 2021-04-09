@@ -28,7 +28,7 @@ const MoreDetails = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [referenceCode, setReferenceCode] = useState("");
-  const [deliveryType, setDeliveryType] = useState("Self");
+  const [deliveryType, setDeliveryType] = useState("self");
   const [disable, setDisable] = useState(false);
   const [deliveryReq, setDeliveryReq] = useState(true);
 

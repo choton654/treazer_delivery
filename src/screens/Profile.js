@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { Button, ActivityIndicator } from "react-native-paper";
+import { Button } from "react-native-paper";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { userState } from "./context/userContext";
@@ -111,22 +111,22 @@ const Profile = () => {
               {state.user && state.user.email}
             </Text>
           </Text>
-          <Text
-            style={{
-              color: "#212121",
-              fontSize: 15,
-              fontWeight: "600",
-              letterSpacing: 1,
-              textAlign: "center",
-              marginVertical: 5,
-            }}>
-            Reference ID:
-            <Text style={{ marginHorizontal: 10 }}>
-              {state.user &&
-                state.user.referenceCode &&
-                state.user.referenceCode}
+          {state.user && state.user.referenceCode && (
+            <Text
+              style={{
+                color: "#212121",
+                fontSize: 15,
+                fontWeight: "600",
+                letterSpacing: 1,
+                textAlign: "center",
+                marginVertical: 5,
+              }}>
+              Reference ID:
+              <Text style={{ marginHorizontal: 10 }}>
+                {state.user.referenceCode}
+              </Text>
             </Text>
-          </Text>
+          )}
         </View>
         <Button
           mode='contained'

@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
-import { StyleSheet, ActivityIndicator, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
 import { userState } from "../context/userContext";
 import axios from "axios";
 import BASE_URL from "../../api";
@@ -38,13 +39,7 @@ const Loading = () => {
         justifyContent: "center",
         alignItems: "center",
       }}>
-      <ActivityIndicator
-        size='large'
-        color='#82b1ff'
-        style={{
-          margin: "auto",
-        }}
-      />
+      <ActivityIndicator animating={true} color='#82b1ff' size='large' />
     </View>
   );
 };

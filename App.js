@@ -6,12 +6,16 @@ const RootNavigation = loadable(() =>
 );
 import { Provider as PaperProvider } from "react-native-paper";
 import { UserContextProvider } from "./src/screens/context/userContext";
+import { OrderContextProvider } from "./src/screens/context/orderContext";
+
 const App = () => {
   return (
     <PaperProvider>
-      <UserContextProvider>
-        <RootNavigation />
-      </UserContextProvider>
+      <OrderContextProvider>
+        <UserContextProvider>
+          <RootNavigation />
+        </UserContextProvider>
+      </OrderContextProvider>
     </PaperProvider>
   );
 };

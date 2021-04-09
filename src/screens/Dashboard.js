@@ -16,8 +16,11 @@ import "./tab.css";
 const { height } = Dimensions.get("window");
 const NewOrders = lazy(() => import("./NewOrders"));
 const AssignedOrders = lazy(() => import("./AssignedOrders"));
+import { orderState } from "./context/orderContext";
 
 const Dashboard = () => {
+  const { state: odrState } = orderState();
+
   return (
     <View style={styles.v1}>
       <View
@@ -59,79 +62,103 @@ const Dashboard = () => {
           </Text>
         </View>
       </View>
-      <Tabs selectedTabClassName='selectedTab' className='tabs'>
-        <TabList className='tabList'>
-          <Tab>
-            <Text style={{ fontWeight: "600", fontSize: 15, color: "#4fc3f7" }}>
-              New Orders
-            </Text>
-          </Tab>
-          <Tab>
-            <Text style={{ fontWeight: "600", fontSize: 15, color: "#4fc3f7" }}>
-              Assigned Orders
-            </Text>
-          </Tab>
-        </TabList>
-
-        <TabPanel>
-          <View
+      {odrState && odrState.error ? (
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "#ffffff",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "auto",
+          }}>
+          <Text
             style={{
-              height: height * 0.7,
-              width: "100%",
-              //   border: "1px solid black",
+              marginHorizontal: "auto",
+              color: "#bdbdbd",
+              fontWeight: "700",
+              fontSize: 15,
+              letterSpacing: 2,
+              marginVertical: "auto",
             }}>
-            <Suspense
-              fallback={
-                <View
-                  style={{
-                    flex: 1,
-                    backgroundColor: "#ffffff",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}>
-                  <ActivityIndicator
-                    size='large'
-                    color='#82b1ff'
+            {odrState.error}
+          </Text>
+        </View>
+      ) : (
+        <Tabs selectedTabClassName='selectedTab' className='tabs'>
+          <TabList className='tabList'>
+            <Tab>
+              <Text
+                style={{ fontWeight: "600", fontSize: 15, color: "#4fc3f7" }}>
+                New Orders
+              </Text>
+            </Tab>
+            <Tab>
+              <Text
+                style={{ fontWeight: "600", fontSize: 15, color: "#4fc3f7" }}>
+                Assigned Orders
+              </Text>
+            </Tab>
+          </TabList>
+          <TabPanel>
+            <View
+              style={{
+                height: height * 0.7,
+                width: "100%",
+                //   border: "1px solid black",
+              }}>
+              <Suspense
+                fallback={
+                  <View
                     style={{
-                      margin: "auto",
-                    }}
-                  />
-                </View>
-              }>
-              <NewOrders />
-            </Suspense>
-          </View>
-        </TabPanel>
-        <TabPanel>
-          <View
-            style={{
-              height: height * 0.7,
-              width: "100%",
-              //   border: "1px solid black",
-            }}>
-            <Suspense
-              fallback={
-                <View
-                  style={{
-                    flex: 1,
-                    backgroundColor: "#ffffff",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}>
-                  <ActivityIndicator
-                    size='large'
-                    color='#82b1ff'
+                      flex: 1,
+                      backgroundColor: "#ffffff",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}>
+                    <ActivityIndicator
+                      size='large'
+                      color='#82b1ff'
+                      style={{
+                        margin: "auto",
+                      }}
+                    />
+                  </View>
+                }>
+                <NewOrders />
+              </Suspense>
+            </View>
+          </TabPanel>
+          <TabPanel>
+            <View
+              style={{
+                height: height * 0.7,
+                width: "100%",
+                //   border: "1px solid black",
+              }}>
+              <Suspense
+                fallback={
+                  <View
                     style={{
-                      margin: "auto",
-                    }}
-                  />
-                </View>
-              }>
-              <AssignedOrders />
-            </Suspense>
-          </View>
-        </TabPanel>
-      </Tabs>
+                      flex: 1,
+                      backgroundColor: "#ffffff",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}>
+                    <ActivityIndicator
+                      size='large'
+                      color='#82b1ff'
+                      style={{
+                        margin: "auto",
+                      }}
+                    />
+                  </View>
+                }>
+                <AssignedOrders />
+              </Suspense>
+            </View>
+          </TabPanel>
+        </Tabs>
+      )}
     </View>
   );
 };
