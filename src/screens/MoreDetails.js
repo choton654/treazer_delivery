@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 // import { lazy } from "@loadable/component";
 import {
   StyleSheet,
@@ -27,10 +27,22 @@ const { height } = Dimensions.get("window");
 const MoreDetails = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
-  const [referenceCode, setReferenceCode] = useState("");
-  const [deliveryType, setDeliveryType] = useState("self");
+  const [referenceCode, setReferenceCode] = useState(0);
+
+  const user = JSON.parse(localStorage.getItem("user"));
+  const restaurentId = user && user.resturantId ? user.resturantId : null;
+
+  const [deliveryType, setDeliveryType] = useState(
+    restaurentId ? "self" : "admin"
+  );
   const [disable, setDisable] = useState(false);
   const [deliveryReq, setDeliveryReq] = useState(true);
+
+  useEffect(() => {
+    if (isNaN(referenceCode)) {
+      setReferenceCode(0);
+    }
+  }, [referenceCode]);
 
   const { dispatch } = userState();
   const token = localStorage.getItem("token");
@@ -153,41 +165,72 @@ const MoreDetails = () => {
         <HelperText type='info' visible={emailErrors()}>
           Email must contain '@' symbol
         </HelperText>
-        <Picker
-          selectedValue={deliveryType}
-          onValueChange={(itemValue, itemIndex) => {
-            if (itemValue === "partner") {
-              setDisable(true);
-            } else {
-              setDisable(false);
-            }
-            setDeliveryType(itemValue);
-          }}
-          style={{
-            marginVertical: 10,
-            width: "80%",
-            height: 40,
-            marginHorizontal: "auto",
-            paddingVertical: 5,
-            borderRadius: 3,
-            paddingHorizontal: 10,
-            background: "#ffffff",
-            border: "1px solid black",
-            color: "#757575",
-            fontWeight: "bold",
-            letterSpacing: 2,
-            fontSize: 15,
-            fontFamily: "Open Sans",
-          }}>
-          <Picker.Item label='Self Delivery' value='self' />
-          <Picker.Item label='Delivery Admin' value='admin' />
-          <Picker.Item label='Delivery Partner' value='partner' />
-        </Picker>
+        {restaurentId ? (
+          <Picker
+            selectedValue={deliveryType}
+            onValueChange={(itemValue, itemIndex) => {
+              if (itemValue === "partner") {
+                setDisable(true);
+              } else {
+                setDisable(false);
+              }
+              setDeliveryType(itemValue);
+            }}
+            style={{
+              marginVertical: 10,
+              width: "80%",
+              height: 40,
+              marginHorizontal: "auto",
+              paddingVertical: 5,
+              borderRadius: 3,
+              paddingHorizontal: 10,
+              background: "#ffffff",
+              border: "1px solid black",
+              color: "#757575",
+              fontWeight: "bold",
+              letterSpacing: 2,
+              fontSize: 15,
+              fontFamily: "Open Sans",
+            }}>
+            <Picker.Item label='Self Delivery' value='self' />
+          </Picker>
+        ) : (
+          <Picker
+            selectedValue={deliveryType}
+            onValueChange={(itemValue, itemIndex) => {
+              if (itemValue === "partner") {
+                setDisable(true);
+              } else {
+                setDisable(false);
+              }
+              setDeliveryType(itemValue);
+            }}
+            style={{
+              marginVertical: 10,
+              width: "80%",
+              height: 40,
+              marginHorizontal: "auto",
+              paddingVertical: 5,
+              borderRadius: 3,
+              paddingHorizontal: 10,
+              background: "#ffffff",
+              border: "1px solid black",
+              color: "#757575",
+              fontWeight: "bold",
+              letterSpacing: 2,
+              fontSize: 15,
+              fontFamily: "Open Sans",
+            }}>
+            <Picker.Item label='Delivery Admin' value='admin' />
+            <Picker.Item label='Delivery Partner' value='partner' />
+          </Picker>
+        )}
+
         <TextInput
           label='Reference Code'
           disabled={disable ? false : true}
           value={referenceCode}
-          onChangeText={(text) => setReferenceCode(text)}
+          onChangeText={(text) => setReferenceCode(parseInt(text))}
           mode='outlined'
           style={{
             height: 40,

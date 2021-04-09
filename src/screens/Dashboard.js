@@ -1,26 +1,29 @@
 import React, { Suspense } from "react";
 import { lazy } from "@loadable/component";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Dimensions,
-  ActivityIndicator,
-} from "react-native";
-import {} from "react-native-paper";
+import { StyleSheet, Text, View, Dimensions } from "react-native";
+import { Button, ActivityIndicator } from "react-native-paper";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import "./tab.css";
+import { useNavigation } from "@react-navigation/native";
 const { height } = Dimensions.get("window");
 const NewOrders = lazy(() => import("./NewOrders"));
 const AssignedOrders = lazy(() => import("./AssignedOrders"));
 import { orderState } from "./context/orderContext";
 
 const Dashboard = () => {
-  const { state: odrState } = orderState();
-
+  const { state: odrState, dispatch: orderDispatch } = orderState();
+  const navigation = useNavigation();
+  // const logout = () => {
+  //   localStorage.removeItem("token");
+  //   localStorage.removeItem("refresh-token");
+  //   orderDispatch({ type: "LOGOUT_USER" });
+  // };
+  const changeOrderType = () => {
+    navigation.navigate("Details");
+  };
   return (
     <View style={styles.v1}>
       <View
@@ -69,19 +72,38 @@ const Dashboard = () => {
             backgroundColor: "#ffffff",
             justifyContent: "center",
             alignItems: "center",
-            padding: "auto",
           }}>
           <Text
             style={{
+              textAlign: "center",
               marginHorizontal: "auto",
               color: "#bdbdbd",
               fontWeight: "700",
               fontSize: 15,
               letterSpacing: 2,
-              marginVertical: "auto",
+              marginVertical: 10,
+              padding: 20,
             }}>
             {odrState.error}
           </Text>
+          <Button
+            mode='contained'
+            onPress={changeOrderType}
+            style={{
+              marginVertical: 20,
+              marginHorizontal: "auto",
+              width: "80%",
+              backgroundColor: "#4fc3f7",
+              boxShadow: "0px 2px 5px 2px #bdbdbd",
+            }}
+            labelStyle={{
+              color: "#ffffff",
+              fontWeight: "700",
+              fontSize: 15,
+              letterSpacing: 2,
+            }}>
+            Change Delivery Type
+          </Button>
         </View>
       ) : (
         <Tabs selectedTabClassName='selectedTab' className='tabs'>
@@ -146,6 +168,7 @@ const Dashboard = () => {
                     }}>
                     <ActivityIndicator
                       size='large'
+                      animating={true}
                       color='#82b1ff'
                       style={{
                         margin: "auto",
