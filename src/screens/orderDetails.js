@@ -1,21 +1,25 @@
 import mapboxgl from "mapbox-gl/dist/mapbox-gl-csp";
 import React, { useEffect, useRef, useState } from "react";
-import { View, TouchableOpacity, Text } from "react-native";
+import { View, TouchableOpacity, Text, Dimensions } from "react-native";
+const { height } = Dimensions.get("window");
 import { geoLocationState } from "./context/locationcontext";
+import { orderState } from "./context/orderContext";
+import { ActivityIndicator } from "react-native-paper";
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import MapboxWorker from "worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker";
 import "./site.css";
-
+import axios from "axios";
+import BASE_URL from "../api";
 import { useNavigation } from "@react-navigation/native";
 
 mapboxgl.workerClass = MapboxWorker;
 mapboxgl.accessToken =
   "pk.eyJ1IjoidHJlYXplciIsImEiOiJja2xxYXJsZmgwMmJwMnBtaXR0M25leTY5In0.Iaj3HteMWU5ZQWCniy4KRA";
 
-const OrderDetails = () => {
+const OrderDetails = ({ route }) => {
   const navigation = useNavigation();
   const { state: locationState } = geoLocationState();
-  // const [coords, setCoords] = useState(false);
+  const { state: odrState, dispatch: orderDispatch } = orderState();
   const mapContainer = useRef();
   const [lng, setLng] = useState(locationState.longitude);
   const [lat, setLat] = useState(locationState.latitude);
@@ -54,8 +58,6 @@ const OrderDetails = () => {
       setLat(data.coords.latitude);
       setLng(data.coords.longitude);
     });
-
-    return () => map.remove();
   }, []);
 
   return (

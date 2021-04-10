@@ -7,6 +7,7 @@ import { Button, ActivityIndicator } from "react-native-paper";
 import axios from "axios";
 import BASE_URL from "../api";
 import { orderState } from "./context/orderContext";
+
 const AssignedOrders = () => {
   const { state: odrState, dispatch: orderDispatch } = orderState();
   const [assignedOrderReq, setAssignedOrderReq] = useState(true);
@@ -64,6 +65,35 @@ const AssignedOrders = () => {
         const { pickedupOrder, msg } = res.data;
         console.log(msg);
         orderDispatch({ type: "PICKUP_ORDERS", payload: pickedupOrder });
+        setPickupOrderReq(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const getPickedupOrder = (orderId) => {
+    setPickupOrderReq(false);
+    axios
+      .post(
+        `${BASE_URL}/api/order/getPickedupOrder`,
+        { deliveryboyId: userId, orderId },
+        {
+          headers: {
+            "x-token": token,
+            "x-refresh-token": refreshtoken,
+          },
+        }
+      )
+      .then((res) => {
+        const { getpickedupOrder } = res.data;
+        orderDispatch({
+          type: "GET_ONE_PICKUP_ORDER",
+          payload: getpickedupOrder,
+        });
+        navigation.navigate("Tabs", {
+          screen: "OrderDetails",
+        });
         setPickupOrderReq(true);
       })
       .catch((err) => {
@@ -287,12 +317,10 @@ const AssignedOrders = () => {
                     Reject
                   </Button>
                 </View>
-              ) : order.isPickedup === true ? (
+              ) : pickuporderReq && order.isPickedup === true ? (
                 <Button
                   mode='contained'
-                  onPress={() =>
-                    navigation.navigate("Tabs", { screen: "OrderDetails" })
-                  }
+                  onPress={() => getPickedupOrder(order._id)}
                   style={{
                     marginVertical: 10,
                     width: "40%",

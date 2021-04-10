@@ -1,7 +1,7 @@
 export const initialState = {
   orders: null,
   assignedOrders: null,
-  pickupOrder: [],
+  pickupOrder: null,
   error: null,
 };
 
@@ -48,7 +48,11 @@ export const reducer = (state, action) => {
             return order;
           }
         }),
-        pickupOrder: [...state.pickupOrder, action.payload],
+      };
+    case "GET_ONE_PICKUP_ORDER":
+      return {
+        ...state,
+        pickupOrder: action.payload,
       };
   }
 };
