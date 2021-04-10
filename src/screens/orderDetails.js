@@ -24,6 +24,16 @@ const OrderDetails = ({ route }) => {
   const [lng, setLng] = useState(locationState.longitude);
   const [lat, setLat] = useState(locationState.latitude);
   const [zoom, setZoom] = useState(15);
+  const [getAddress, setGetAddress] = useState(false);
+
+  const orderAddressLongitude =
+    odrState.pickupOrder &&
+    odrState.pickupOrder.shippingaddress.coordinates &&
+    odrState.pickupOrder.shippingaddress.coordinates[0];
+  const orderAddressLattitude =
+    odrState.pickupOrder &&
+    odrState.pickupOrder.shippingaddress.coordinates &&
+    odrState.pickupOrder.shippingaddress.coordinates[1];
 
   useEffect(() => {
     const map = new mapboxgl.Map({
@@ -51,14 +61,66 @@ const OrderDetails = ({ route }) => {
         maxZoom: 18,
       },
     });
-    map.addControl(geolocate);
-
     geolocate.on("geolocate", (data, err) => {
       // console.log(data);
       setLat(data.coords.latitude);
       setLng(data.coords.longitude);
     });
-  }, []);
+    if (getAddress) {
+      map.addControl(geolocate);
+    }
+    map.on("load", () => {
+      axios
+        .get(
+          `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${locationState.longitude}%2C${locationState.latitude}%3B${orderAddressLongitude}%2C${orderAddressLattitude}?alternatives=true&geometries=geojson&steps=true&access_token=pk.eyJ1IjoidHJlYXplciIsImEiOiJja2xxYXJsZmgwMmJwMnBtaXR0M25leTY5In0.Iaj3HteMWU5ZQWCniy4KRA`
+        )
+        .then((res) => {
+          console.log(res.data.routes[0]);
+          const route2 = res.data.routes[0].geometry.coordinates;
+          const geojson = {
+            type: "Feature",
+            properties: {},
+            geometry: {
+              type: "LineString",
+              coordinates: route2,
+            },
+          };
+          // if the route already exists on the map, reset it using setData
+          if (map.getSource("route")) {
+            map.getSource("route").setData(geojson);
+          } else {
+            // otherwise, make a new request
+            map.addLayer({
+              id: "route",
+              type: "line",
+              source: {
+                type: "geojson",
+                data: {
+                  type: "Feature",
+                  properties: {},
+                  geometry: {
+                    type: "LineString",
+                    coordinates: route2,
+                  },
+                },
+              },
+              layout: {
+                "line-join": "round",
+                "line-cap": "round",
+              },
+              paint: {
+                "line-color": "#3887be",
+                "line-width": 5,
+                "line-opacity": 0.75,
+              },
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
+  }, [getAddress]);
 
   return (
     // eslint-disable-next-line react-native/no-inline-styles
@@ -79,7 +141,8 @@ const OrderDetails = ({ route }) => {
         }}>
         <TouchableOpacity
           onPress={() => {
-            navigation.goBack();
+            // navigation.goBack();
+            setGetAddress(!getAddress);
           }}
           style={{
             width: 100,
