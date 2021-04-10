@@ -66,60 +66,80 @@ const OrderDetails = ({ route }) => {
       setLat(data.coords.latitude);
       setLng(data.coords.longitude);
     });
+    map.addControl(geolocate);
+
+    // Set options
+    const userMarker = new mapboxgl.Marker({
+      color: "#d32f2f",
+      draggable: false,
+    })
+      .setLngLat([locationState.longitude, locationState.latitude])
+      .addTo(map);
+
+    map.addControl(userMarker);
+
+    var destinationMarker = new mapboxgl.Marker({
+      color: "#4caf50",
+      draggable: false,
+    })
+      .setLngLat([orderAddressLongitude, orderAddressLattitude])
+      .addTo(map);
+
+    map.addControl(destinationMarker);
+
     if (getAddress) {
-      map.addControl(geolocate);
-    }
-    map.on("load", () => {
-      axios
-        .get(
-          `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${locationState.longitude}%2C${locationState.latitude}%3B${orderAddressLongitude}%2C${orderAddressLattitude}?alternatives=true&geometries=geojson&steps=true&access_token=pk.eyJ1IjoidHJlYXplciIsImEiOiJja2xxYXJsZmgwMmJwMnBtaXR0M25leTY5In0.Iaj3HteMWU5ZQWCniy4KRA`
-        )
-        .then((res) => {
-          console.log(res.data.routes[0]);
-          const route2 = res.data.routes[0].geometry.coordinates;
-          const geojson = {
-            type: "Feature",
-            properties: {},
-            geometry: {
-              type: "LineString",
-              coordinates: route2,
-            },
-          };
-          // if the route already exists on the map, reset it using setData
-          if (map.getSource("route")) {
-            map.getSource("route").setData(geojson);
-          } else {
-            // otherwise, make a new request
-            map.addLayer({
-              id: "route",
-              type: "line",
-              source: {
-                type: "geojson",
-                data: {
-                  type: "Feature",
-                  properties: {},
-                  geometry: {
-                    type: "LineString",
-                    coordinates: route2,
+      map.on("load", () => {
+        axios
+          .get(
+            `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${locationState.longitude}%2C${locationState.latitude}%3B${orderAddressLongitude}%2C${orderAddressLattitude}?alternatives=true&geometries=geojson&steps=true&access_token=pk.eyJ1IjoidHJlYXplciIsImEiOiJja2xxYXJsZmgwMmJwMnBtaXR0M25leTY5In0.Iaj3HteMWU5ZQWCniy4KRA`
+          )
+          .then((res) => {
+            console.log(res.data.routes[0]);
+            const route2 = res.data.routes[0].geometry.coordinates;
+            const geojson = {
+              type: "Feature",
+              properties: {},
+              geometry: {
+                type: "LineString",
+                coordinates: route2,
+              },
+            };
+            // if the route already exists on the map, reset it using setData
+            if (map.getSource("route")) {
+              map.getSource("route").setData(geojson);
+            } else {
+              // otherwise, make a new request
+              map.addLayer({
+                id: "route",
+                type: "line",
+                source: {
+                  type: "geojson",
+                  data: {
+                    type: "Feature",
+                    properties: {},
+                    geometry: {
+                      type: "LineString",
+                      coordinates: route2,
+                    },
                   },
                 },
-              },
-              layout: {
-                "line-join": "round",
-                "line-cap": "round",
-              },
-              paint: {
-                "line-color": "#3887be",
-                "line-width": 5,
-                "line-opacity": 0.75,
-              },
-            });
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    });
+                layout: {
+                  "line-join": "round",
+                  "line-cap": "round",
+                },
+                paint: {
+                  "line-color": "#ffab00",
+                  "line-width": 5,
+                  "line-opacity": 1,
+                },
+              });
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      });
+    }
   }, [getAddress]);
 
   return (
@@ -164,7 +184,7 @@ const OrderDetails = ({ route }) => {
               fontSize: 20,
               color: "#ffffff",
             }}>
-            Go Back
+            On/Off Route
           </Text>
         </TouchableOpacity>
       </View>
