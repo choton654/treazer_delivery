@@ -102,7 +102,7 @@ const Dashboard = () => {
               fontSize: 15,
               letterSpacing: 2,
             }}>
-            Change Delivery Type
+            Contact Treazer team
           </Button>
         </View>
       ) : (

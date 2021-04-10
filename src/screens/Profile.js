@@ -114,7 +114,7 @@ const Profile = () => {
               {state.user && state.user.email}
             </Text>
           </Text>
-          {state.user && state.user.referenceCode !== 0 && (
+          {state.user.referenceCode && state.user.referenceCode !== 0 && (
             <Text
               style={{
                 color: "#212121",

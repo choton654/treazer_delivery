@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, ScrollView, Dimensions } from "react-native";
 const { height } = Dimensions.get("window");
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -9,6 +9,8 @@ import { orderState } from "./context/orderContext";
 
 const NewOrders = () => {
   const { state: odrState, dispatch: orderDispatch } = orderState();
+
+  const [acceptOrderReq, setAcceptOrderReq] = useState(true);
 
   const token = localStorage.getItem("token");
   const refreshtoken = localStorage.getItem("refresh-token");
@@ -44,6 +46,30 @@ const NewOrders = () => {
         } else {
           orderDispatch({ type: "GET_RESTAURENTS_ORDERS", payload: order });
         }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const acceptOrder = (deliveryboyId, orderId) => {
+    setAcceptOrderReq(false);
+    axios
+      .post(
+        `${BASE_URL}/api/order/acceptOrder`,
+        { deliveryboyId, orderId },
+        {
+          headers: {
+            "x-token": token,
+            "x-refresh-token": refreshtoken,
+          },
+        }
+      )
+      .then((res) => {
+        const { acceptedOrder, msg } = res.data;
+        console.log(acceptedOrder);
+        orderDispatch({ type: "ACCEPT_ORDER", payload: acceptedOrder });
+        setAcceptOrderReq(true);
       })
       .catch((err) => {
         console.log(err);
@@ -202,49 +228,68 @@ const NewOrders = () => {
                     order.shippingaddress.formattedAddress}
                 </Text>
               </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-around",
-                  marginBottom: 5,
-                }}>
-                <Button
-                  mode='contained'
-                  //   onPress={() => navigation.navigate("Details")}
+              {acceptOrderReq ? (
+                <View
                   style={{
-                    marginBottom: 10,
-                    width: "20%",
-                    height: 30,
-                    backgroundColor: "#4fc3f7",
-                    boxShadow: "0px 2px 2px 2px #bdbdbd",
-                  }}
-                  labelStyle={{
-                    color: "#ffffff",
-                    fontWeight: "700",
-                    fontSize: 12,
-                    marginHorizontal: "none",
+                    flexDirection: "row",
+                    justifyContent: "space-around",
+                    marginBottom: 5,
                   }}>
-                  Accept
-                </Button>
-                <Button
-                  mode='contained'
-                  //   onPress={() => navigation.navigate("Details")}
+                  <Button
+                    mode='contained'
+                    onPress={() => acceptOrder(user._id, order._id)}
+                    style={{
+                      marginBottom: 10,
+                      width: "20%",
+                      height: 30,
+                      backgroundColor: "#4fc3f7",
+                      boxShadow: "0px 2px 5px 2px #bdbdbd",
+                    }}
+                    labelStyle={{
+                      color: "#ffffff",
+                      fontWeight: "700",
+                      fontSize: 12,
+                      marginHorizontal: "none",
+                    }}>
+                    Accept
+                  </Button>
+                  <Button
+                    mode='contained'
+                    //   onPress={() => navigation.navigate("Details")}
+                    style={{
+                      marginBottom: 10,
+                      width: "20%",
+                      height: 30,
+                      backgroundColor: "#ff5252",
+                      boxShadow: "0px 2px 5px 2px #bdbdbd",
+                    }}
+                    labelStyle={{
+                      color: "#ffffff",
+                      fontWeight: "700",
+                      fontSize: 12,
+                      marginHorizontal: "none",
+                    }}>
+                    Reject
+                  </Button>
+                </View>
+              ) : (
+                <View
                   style={{
-                    marginBottom: 10,
-                    width: "20%",
-                    height: 30,
-                    backgroundColor: "#ff5252",
-                    boxShadow: "0px 2px 2px 2px #bdbdbd",
-                  }}
-                  labelStyle={{
-                    color: "#ffffff",
-                    fontWeight: "700",
-                    fontSize: 12,
-                    marginHorizontal: "none",
+                    marginHorizontal: "auto",
+                    backgroundColor: "#ffffff",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "60%",
+                    height: 40,
                   }}>
-                  Reject
-                </Button>
-              </View>
+                  <ActivityIndicator
+                    animating={true}
+                    color='#82b1ff'
+                    size='small'
+                    style={{ marginVertical: 10 }}
+                  />
+                </View>
+              )}
             </View>
           </View>
         ))
