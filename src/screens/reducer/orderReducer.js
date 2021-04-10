@@ -1,6 +1,7 @@
 export const initialState = {
   orders: null,
   assignedOrders: null,
+  pickupOrder: [],
   error: null,
 };
 
@@ -11,7 +12,6 @@ export const reducer = (state, action) => {
         ...state,
         orders: action.payload,
       };
-
     case "ORDER_ERROR":
       return {
         ...state,
@@ -36,6 +36,19 @@ export const reducer = (state, action) => {
       return {
         ...state,
         assignedOrders: action.payload,
+      };
+    case "PICKUP_ORDERS":
+      return {
+        ...state,
+        assignedOrders: state.assignedOrders.map((order) => {
+          if (order._id.toString() === action.payload._id.toString()) {
+            order.isPickedup = true;
+            return order;
+          } else {
+            return order;
+          }
+        }),
+        pickupOrder: [...state.pickupOrder, action.payload],
       };
   }
 };

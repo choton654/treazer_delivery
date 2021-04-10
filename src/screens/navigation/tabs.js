@@ -5,6 +5,7 @@ import { lazy } from "@loadable/component";
 const Dashboard = lazy(() => import("../Dashboard"));
 const CompleteOrder = lazy(() => import("../CompleteOrder"));
 const Profile = lazy(() => import("../Profile"));
+const OrderDetails = lazy(() => import("../orderDetails"));
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { userState } from "../context/userContext";
 
@@ -30,6 +31,10 @@ const Tabs = () => {
             iconSize = focused ? 35 : 25;
           } else if (route.name === "Profile") {
             iconName = focused ? "md-person" : "md-person-outline";
+            iconColor = focused ? "#4fc3f7" : "#424242";
+            iconSize = focused ? 35 : 25;
+          } else if (route.name === "OrderDetails") {
+            iconName = focused ? "map" : "map-outline";
             iconColor = focused ? "#4fc3f7" : "#424242";
             iconSize = focused ? 35 : 25;
           }
@@ -89,6 +94,31 @@ const Tabs = () => {
               </View>
             }>
             <CompleteOrder {...props} />
+          </Suspense>
+        )}
+      />
+      <Tab.Screen
+        name='OrderDetails'
+        component={(props) => (
+          <Suspense
+            fallback={
+              <View
+                style={{
+                  flex: 1,
+                  backgroundColor: "#ffffff",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}>
+                <ActivityIndicator
+                  size='large'
+                  color='#82b1ff'
+                  style={{
+                    margin: "auto",
+                  }}
+                />
+              </View>
+            }>
+            <OrderDetails {...props} />
           </Suspense>
         )}
       />

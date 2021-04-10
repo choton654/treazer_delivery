@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, ScrollView, Dimensions } from "react-native";
 const { height } = Dimensions.get("window");
+import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Button, ActivityIndicator } from "react-native-paper";
 import axios from "axios";
@@ -9,6 +10,8 @@ import { orderState } from "./context/orderContext";
 const AssignedOrders = () => {
   const { state: odrState, dispatch: orderDispatch } = orderState();
   const [assignedOrderReq, setAssignedOrderReq] = useState(true);
+  const [pickuporderReq, setPickupOrderReq] = useState(true);
+  const navigation = useNavigation();
   useEffect(() => {
     if (!odrState.assignedOrders) {
       get_assigned_order();
@@ -19,6 +22,7 @@ const AssignedOrders = () => {
   const refreshtoken = localStorage.getItem("refresh-token");
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user && user._id;
+
   const get_assigned_order = () => {
     setAssignedOrderReq(false);
     axios
@@ -37,6 +41,30 @@ const AssignedOrders = () => {
         console.log(assignedOrder);
         orderDispatch({ type: "ASSIGNED_ORDER", payload: assignedOrder });
         setAssignedOrderReq(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const pickupOrder = (orderId) => {
+    setPickupOrderReq(false);
+    axios
+      .post(
+        `${BASE_URL}/api/order/pickedupOrder`,
+        { deliveryboyId: userId, orderId },
+        {
+          headers: {
+            "x-token": token,
+            "x-refresh-token": refreshtoken,
+          },
+        }
+      )
+      .then((res) => {
+        const { pickedupOrder, msg } = res.data;
+        console.log(msg);
+        orderDispatch({ type: "PICKUP_ORDERS", payload: pickedupOrder });
+        setPickupOrderReq(true);
       })
       .catch((err) => {
         console.log(err);
@@ -214,18 +242,61 @@ const AssignedOrders = () => {
                     order.shippingaddress.formattedAddress}
                 </Text>
               </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-around",
-                  marginBottom: 5,
-                }}>
+
+              {pickuporderReq && order.isPickedup === false ? (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-around",
+                    marginBottom: 5,
+                  }}>
+                  <Button
+                    mode='contained'
+                    onPress={() => pickupOrder(order._id)}
+                    style={{
+                      marginBottom: 10,
+                      width: "20%",
+                      height: 30,
+                      backgroundColor: "#4fc3f7",
+                      boxShadow: "0px 2px 5px 2px #bdbdbd",
+                    }}
+                    labelStyle={{
+                      color: "#ffffff",
+                      fontWeight: "700",
+                      fontSize: 12,
+                      marginHorizontal: "none",
+                    }}>
+                    Pickup
+                  </Button>
+                  <Button
+                    mode='contained'
+                    //   onPress={() => navigation.navigate("Details")}
+                    style={{
+                      marginBottom: 10,
+                      width: "20%",
+                      height: 30,
+                      backgroundColor: "#ff5252",
+                      boxShadow: "0px 2px 5px 2px #bdbdbd",
+                    }}
+                    labelStyle={{
+                      color: "#ffffff",
+                      fontWeight: "700",
+                      fontSize: 12,
+                      marginHorizontal: "none",
+                    }}>
+                    Reject
+                  </Button>
+                </View>
+              ) : order.isPickedup === true ? (
                 <Button
                   mode='contained'
-                  //   onPress={() => navigation.navigate("Details")}
+                  onPress={() =>
+                    navigation.navigate("Tabs", { screen: "OrderDetails" })
+                  }
                   style={{
-                    marginBottom: 10,
-                    width: "20%",
+                    marginVertical: 10,
+                    width: "40%",
+                    marginHorizontal: "auto",
                     height: 30,
                     backgroundColor: "#4fc3f7",
                     boxShadow: "0px 2px 5px 2px #bdbdbd",
@@ -236,27 +307,26 @@ const AssignedOrders = () => {
                     fontSize: 12,
                     marginHorizontal: "none",
                   }}>
-                  Pickup
+                  View More
                 </Button>
-                <Button
-                  mode='contained'
-                  //   onPress={() => navigation.navigate("Details")}
+              ) : (
+                <View
                   style={{
-                    marginBottom: 10,
-                    width: "20%",
+                    marginHorizontal: "auto",
+                    backgroundColor: "#ffffff",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "60%",
                     height: 30,
-                    backgroundColor: "#ff5252",
-                    boxShadow: "0px 2px 5px 2px #bdbdbd",
-                  }}
-                  labelStyle={{
-                    color: "#ffffff",
-                    fontWeight: "700",
-                    fontSize: 12,
-                    marginHorizontal: "none",
+                    marginVertical: 10,
                   }}>
-                  Reject
-                </Button>
-              </View>
+                  <ActivityIndicator
+                    animating={true}
+                    color='#82b1ff'
+                    size='small'
+                  />
+                </View>
+              )}
             </View>
           </View>
         ))
