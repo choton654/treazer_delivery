@@ -27,7 +27,7 @@ const { height } = Dimensions.get("window");
 const MoreDetails = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
-  const [referenceCode, setReferenceCode] = useState(0);
+  const [referenceCode, setReferenceCode] = useState("");
 
   const user = JSON.parse(localStorage.getItem("user"));
   const restaurentId = user && user.resturantId ? user.resturantId : null;

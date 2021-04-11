@@ -1,7 +1,8 @@
 // import { StatusBar } from "expo-status-bar";
-import React from "react";
-import loadable from "@loadable/component";
-const RootNavigation = loadable(() =>
+import React, { Suspense } from "react";
+import { ActivityIndicator, View } from "react-native";
+import { lazy } from "@loadable/component";
+const RootNavigation = lazy(() =>
   import("./src/screens/navigation/RootNavigation")
 );
 import { Provider as PaperProvider } from "react-native-paper";
@@ -15,7 +16,26 @@ const App = () => {
       <OrderContextProvider>
         <UserContextProvider>
           <LocationContextProvider>
-            <RootNavigation />
+            <Suspense
+              fallback={
+                <View
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#ffffff",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}>
+                  <ActivityIndicator
+                    size='large'
+                    color='#82b1ff'
+                    style={{
+                      margin: "auto",
+                    }}
+                  />
+                </View>
+              }>
+              <RootNavigation />
+            </Suspense>
           </LocationContextProvider>
         </UserContextProvider>
       </OrderContextProvider>

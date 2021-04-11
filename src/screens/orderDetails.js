@@ -4,13 +4,16 @@ import { View, TouchableOpacity, Text, Dimensions } from "react-native";
 const { height } = Dimensions.get("window");
 import { geoLocationState } from "./context/locationcontext";
 import { orderState } from "./context/orderContext";
-import { ActivityIndicator } from "react-native-paper";
+import { ActivityIndicator, Divider } from "react-native-paper";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import MapboxWorker from "worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker";
 import "./site.css";
 import axios from "axios";
 import BASE_URL from "../api";
 import { useNavigation } from "@react-navigation/native";
+import { ScrollView } from "react-native-gesture-handler";
 
 mapboxgl.workerClass = MapboxWorker;
 mapboxgl.accessToken =
@@ -143,22 +146,27 @@ const OrderDetails = ({ route }) => {
   }, [getAddress]);
 
   return (
-    // eslint-disable-next-line react-native/no-inline-styles
-    <View style={{ flex: 1, alignItems: "center", backgroundColor: "#ffffff" }}>
+    <ScrollView style={{ flex: 1, backgroundColor: "#ffffff" }}>
       <View
         style={{
-          width: "100%",
-          height: "75%",
+          height: height * 0.6,
+          width: "90%",
+          marginHorizontal: "auto",
+          alignItems: "center",
+          backgroundColor: "#ffffff",
+          borderBottomLeftRadius: 20,
+          borderBottomRightRadius: 20,
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          top: height * 0.4,
         }}>
-        <div className='map-container-2' ref={mapContainer} />
-      </View>
-      <View
-        style={{
-          width: "100%",
-          height: "15%",
-          alignContent: "center",
-          justifyContent: "center",
-        }}>
+        <View
+          style={{
+            width: "100%",
+            height: "75%",
+          }}>
+          <div className='map-container-2' ref={mapContainer} />
+        </View>
         <TouchableOpacity
           onPress={() => {
             // navigation.goBack();
@@ -188,7 +196,218 @@ const OrderDetails = ({ route }) => {
           </Text>
         </TouchableOpacity>
       </View>
-    </View>
+
+      <View
+        style={{
+          position: "absolute",
+          height: height * 0.4,
+          width: "100%",
+          // border: "1px solid black",
+        }}>
+        <View
+          style={{
+            width: "100%",
+            height: 60,
+            backgroundColor: "#00E0FF",
+          }}>
+          <View
+            style={{
+              width: "100%",
+              flexDirection: "row",
+              alignItems: "center",
+            }}>
+            <LazyLoadImage
+              style={{
+                width: 35,
+                height: 35,
+                marginLeft: 10,
+                marginTop: 10,
+                resizeMode: "cover",
+                borderRadius: 30,
+                boxShadow: "0px 2px 10px 1px #757575",
+              }}
+              src={require("../assets/logo/delivery_treazer_logo.png")}
+              effect='blur'
+            />
+            <Text
+              style={{
+                marginHorizontal: "auto",
+                color: "#ffffff",
+                fontWeight: "700",
+                fontSize: 20,
+                letterSpacing: 1,
+                marginVertical: "auto",
+              }}>
+              Dashboard
+            </Text>
+          </View>
+        </View>
+        {odrState.pickupOrder ? (
+          <View style={{ width: "100%", marginVertical: "auto", padding: 20 }}>
+            <Text
+              style={{
+                fontSize: 15,
+                letterSpacing: 2,
+                fontWeight: "700",
+                fontFamily: "Open Sans",
+                color: "#212121",
+              }}>
+              {odrState.pickupOrder.userId.username}
+            </Text>
+            <View
+              style={{
+                justifyContent: "space-between",
+                marginVertical: 10,
+              }}>
+              <Text
+                style={{
+                  fontSize: 12,
+                  letterSpacing: 2,
+                  fontWeight: "400",
+                  fontFamily: "Open Sans",
+                  color: "#212121",
+                }}>
+                order time:
+                <Text
+                  style={{
+                    textAlign: "Center",
+                    fontSize: 12,
+                    letterSpacing: 2,
+                    fontWeight: "400",
+                    fontFamily: "Open Sans",
+                    color: "#212121",
+                  }}>
+                  {odrState.pickupOrder.createdAt}
+                </Text>
+              </Text>
+              <Text
+                style={{
+                  fontSize: 12,
+                  letterSpacing: 2,
+                  fontWeight: "600",
+                  fontFamily: "Open Sans",
+                  color: "#212121",
+                  marginVertical: 5,
+                }}>
+                Order ID:{" "}
+                <Text
+                  style={{
+                    textAlign: "Center",
+                    fontSize: 12,
+                    letterSpacing: 2,
+                    fontWeight: "600",
+                    fontFamily: "Open Sans",
+                    color: "#212121",
+                  }}>
+                  {odrState.pickupOrder._id}
+                </Text>
+              </Text>
+            </View>
+            <Divider
+              style={{
+                height: 3,
+                width: "100%",
+                backgroundColor: "#bdbdbd",
+                marginHorizontal: "auto",
+              }}
+            />
+            <View
+              style={{
+                justifyContent: "space-between",
+                marginVertical: 10,
+              }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    letterSpacing: 2,
+                    fontWeight: "600",
+                    fontFamily: "Open Sans",
+                    color: "#212121",
+                  }}>
+                  order Amount
+                </Text>
+                <Text
+                  style={{
+                    textAlign: "Center",
+                    fontSize: 12,
+                    letterSpacing: 2,
+                    fontWeight: "600",
+                    fontFamily: "Open Sans",
+                    color: "#212121",
+                  }}>
+                  Rs.{odrState.pickupOrder.totalPrice}
+                </Text>
+              </View>
+              <Divider
+                style={{
+                  height: 1,
+                  width: "100%",
+                  backgroundColor: "#bdbdbd",
+                  marginHorizontal: "auto",
+                  marginVertical: 5,
+                }}
+              />
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    letterSpacing: 2,
+                    fontWeight: "600",
+                    fontFamily: "Open Sans",
+                    color: "#212121",
+                    marginVertical: 5,
+                  }}>
+                  Payment Type
+                </Text>
+                <Text
+                  style={{
+                    textAlign: "Center",
+                    fontSize: 12,
+                    letterSpacing: 2,
+                    fontWeight: "600",
+                    fontFamily: "Open Sans",
+                    color: "#212121",
+                  }}>
+                  Pre-paid
+                </Text>
+              </View>
+              <Divider
+                style={{
+                  height: 1,
+                  width: "100%",
+                  backgroundColor: "#bdbdbd",
+                  marginHorizontal: "auto",
+                  marginVertical: 5,
+                }}
+              />
+            </View>
+          </View>
+        ) : (
+          <View style={{ width: "100%", marginVertical: "auto", padding: 20 }}>
+            <Text
+              style={{
+                textAlign: "Center",
+                fontSize: 20,
+                letterSpacing: 2,
+                fontWeight: "700",
+                fontFamily: "Open Sans",
+                color: "#bdbdbd",
+              }}>
+              You have not picked up any order
+            </Text>
+          </View>
+        )}
+      </View>
+    </ScrollView>
   );
 };
 

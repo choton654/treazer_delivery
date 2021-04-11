@@ -23,6 +23,8 @@ export const reducer = (state, action) => {
         ...state,
         orders: null,
         assignedOrders: null,
+        pickupOrder: null,
+        error: null,
       };
     case "ACCEPT_ORDER":
       return {
