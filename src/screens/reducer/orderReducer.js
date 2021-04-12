@@ -2,6 +2,7 @@ export const initialState = {
   orders: null,
   assignedOrders: null,
   pickupOrder: null,
+  completedOrders: [],
   error: null,
 };
 
@@ -24,6 +25,7 @@ export const reducer = (state, action) => {
         orders: null,
         assignedOrders: null,
         pickupOrder: null,
+        completedOrders: [],
         error: null,
       };
     case "ACCEPT_ORDER":
@@ -55,6 +57,11 @@ export const reducer = (state, action) => {
       return {
         ...state,
         pickupOrder: action.payload,
+      };
+    case "GET_COMPLETED_ORDERS":
+      return {
+        ...state,
+        completedOrders: action.payload,
       };
   }
 };

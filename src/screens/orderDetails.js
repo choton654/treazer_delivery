@@ -29,6 +29,7 @@ const OrderDetails = ({ route }) => {
   const [zoom, setZoom] = useState(15);
   const [getAddress, setGetAddress] = useState(false);
   const [sellerOTP, setSellerOTP] = useState("");
+  const [buyerOTP, setBuyerOTP] = useState("");
 
   const orderAddressLongitude =
     odrState.pickupOrder &&
@@ -145,6 +146,32 @@ const OrderDetails = ({ route }) => {
       });
     }
   }, [getAddress]);
+
+  const token = localStorage.getItem("token");
+  const refreshtoken = localStorage.getItem("refresh-token");
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user && user._id;
+
+  const OTPmatch = () => {
+    const orderId = odrState.pickupOrder && odrState.pickupOrder._id;
+    axios
+      .post(
+        `${BASE_URL}/api/order/orderOTPmatch`,
+        { deliveryboyId: userId, orderId, sellerOTP, buyerOTP },
+        {
+          headers: {
+            "x-token": token,
+            "x-refresh-token": refreshtoken,
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: "#ffffff" }}>
@@ -307,10 +334,11 @@ const OrderDetails = ({ route }) => {
                 }}>
                 <TextInput
                   label='OTP'
-                  value={sellerOTP}
+                  value={buyerOTP}
                   // error={phoneError ? true : false}
                   onChangeText={(text) => {
-                    setSellerOTP(text);
+                    setBuyerOTP(text);
+                    setSellerOTP("");
                   }}
                   mode='outlined'
                   style={{
@@ -322,7 +350,7 @@ const OrderDetails = ({ route }) => {
                 />
                 <Button
                   mode='contained'
-                  // onPress={login}
+                  onPress={OTPmatch}
                   compact={true}
                   // disabled={
                   //   !phoneErrors() && !phoneError && !passwordError ? false : true
@@ -370,39 +398,42 @@ const OrderDetails = ({ route }) => {
             marginVertical: 10,
           }}
         />
-        <View style={{ width: "100%", marginBottom: 20 }}>
-          <Text
-            style={{
-              fontSize: 15,
-              letterSpacing: 2,
-              fontWeight: "700",
-              fontFamily: "Open Sans",
-              color: "#bdbdbd",
-              marginTop: 5,
-              marginBottom: 10,
-            }}>
-            Packeg Photo
-          </Text>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              width: "100%",
-            }}>
+        {odrState.pickupOrder && (
+          <View style={{ width: "100%", marginBottom: 20 }}>
+            <Text
+              style={{
+                fontSize: 15,
+                letterSpacing: 2,
+                fontWeight: "700",
+                fontFamily: "Open Sans",
+                color: "#bdbdbd",
+                marginTop: 5,
+                marginBottom: 10,
+              }}>
+              Packeg Photo
+            </Text>
             <View
               style={{
-                width: 150,
-                height: 200,
-                backgroundColor: "#eeeeee",
-              }}></View>
-            <View
-              style={{
-                width: 150,
-                height: 200,
-                backgroundColor: "#eeeeee",
-              }}></View>
+                flexDirection: "row",
+                justifyContent: "space-between",
+                width: "100%",
+              }}>
+              <View
+                style={{
+                  width: 150,
+                  height: 200,
+                  backgroundColor: "#eeeeee",
+                }}></View>
+              <View
+                style={{
+                  width: 150,
+                  height: 200,
+                  backgroundColor: "#eeeeee",
+                }}></View>
+            </View>
           </View>
-        </View>
+        )}
+
         <Button
           mode='contained'
           onPress={() => navigation.goBack()}
@@ -749,6 +780,7 @@ const OrderDetails = ({ route }) => {
                     // error={phoneError ? true : false}
                     onChangeText={(text) => {
                       setSellerOTP(text);
+                      setBuyerOTP("");
                     }}
                     mode='outlined'
                     style={{
@@ -760,7 +792,7 @@ const OrderDetails = ({ route }) => {
                   />
                   <Button
                     mode='contained'
-                    // onPress={login}
+                    onPress={OTPmatch}
                     compact={true}
                     // disabled={
                     //   !phoneErrors() && !phoneError && !passwordError ? false : true
