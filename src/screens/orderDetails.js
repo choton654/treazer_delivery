@@ -4,7 +4,12 @@ import { View, TouchableOpacity, Text, Dimensions } from "react-native";
 const { height } = Dimensions.get("window");
 import { geoLocationState } from "./context/locationcontext";
 import { orderState } from "./context/orderContext";
-import { ActivityIndicator, Divider } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Divider,
+  Button,
+  TextInput,
+} from "react-native-paper";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 // eslint-disable-next-line import/no-webpack-loader-syntax
@@ -28,6 +33,7 @@ const OrderDetails = ({ route }) => {
   const [lat, setLat] = useState(locationState.latitude);
   const [zoom, setZoom] = useState(15);
   const [getAddress, setGetAddress] = useState(false);
+  const [sellerOTP, setSellerOTP] = useState("");
 
   const orderAddressLongitude =
     odrState.pickupOrder &&
@@ -149,7 +155,7 @@ const OrderDetails = ({ route }) => {
     <ScrollView style={{ flex: 1, backgroundColor: "#ffffff" }}>
       <View
         style={{
-          height: height * 0.6,
+          height: height * 1.5,
           width: "90%",
           marginHorizontal: "auto",
           alignItems: "center",
@@ -158,12 +164,12 @@ const OrderDetails = ({ route }) => {
           borderBottomRightRadius: 20,
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
-          top: height * 0.4,
+          top: height * 0.7,
         }}>
         <View
           style={{
             width: "100%",
-            height: "75%",
+            height: 400,
           }}>
           <div className='map-container-2' ref={mapContainer} />
         </View>
@@ -173,13 +179,13 @@ const OrderDetails = ({ route }) => {
             setGetAddress(!getAddress);
           }}
           style={{
-            width: 100,
-            height: 60,
+            width: "80%",
+            height: 40,
             padding: "auto",
             justifyContent: "center",
             alignItems: "center",
             marginHorizontal: "auto",
-            marginVertical: "auto",
+            marginVertical: 10,
             borderRadius: 20,
             boxShadow: "3px 4px 6px #C9CCD1, -3px -4px 6px #ffffff",
             backgroundColor: "#4fc3f7",
@@ -195,12 +201,218 @@ const OrderDetails = ({ route }) => {
             On/Off Route
           </Text>
         </TouchableOpacity>
+        <View
+          style={{
+            width: "100%",
+            backgroundColor: "#ffffff",
+            marginHorizontal: "auto",
+            marginVertical: 5,
+            paddingRight: 10,
+          }}>
+          <Text
+            style={{
+              fontSize: 15,
+              letterSpacing: 2,
+              fontWeight: "700",
+              fontFamily: "Open Sans",
+              color: "#bdbdbd",
+              marginVertical: 5,
+            }}>
+            Buyer Info
+          </Text>
+          <View style={{ flexDirection: "row" }}>
+            <View>
+              <Text
+                style={{
+                  fontSize: 12,
+                  letterSpacing: 2,
+                  fontWeight: "400",
+                  fontFamily: "Open Sans",
+                  color: "#212121",
+                }}>
+                Buyer Name
+              </Text>
+              <Text
+                style={{
+                  fontSize: 12,
+                  letterSpacing: 2,
+                  fontWeight: "400",
+                  fontFamily: "Open Sans",
+                  color: "#212121",
+                }}>
+                Phone No
+              </Text>
+              <Text
+                style={{
+                  fontSize: 12,
+                  letterSpacing: 2,
+                  fontWeight: "400",
+                  fontFamily: "Open Sans",
+                  color: "#212121",
+                }}>
+                Address
+              </Text>
+            </View>
+            <View
+              style={{
+                marginLeft: 5,
+                width: "70%",
+              }}>
+              <Text
+                style={{
+                  fontSize: 12,
+                  letterSpacing: 2,
+                  fontWeight: "400",
+                  fontFamily: "Open Sans",
+                  color: "#212121",
+                }}>
+                :{odrState.pickupOrder.userId.username}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 12,
+                  letterSpacing: 2,
+                  fontWeight: "400",
+                  fontFamily: "Open Sans",
+                  color: "#212121",
+                }}>
+                :{odrState.pickupOrder.userId.mobile_no}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 12,
+                  letterSpacing: 2,
+                  fontWeight: "400",
+                  fontFamily: "Open Sans",
+                  color: "#212121",
+                }}>
+                :{odrState.pickupOrder.resturantId.address}
+              </Text>
+            </View>
+          </View>
+        </View>
+        <Divider
+          style={{
+            height: 1,
+            width: "100%",
+            backgroundColor: "#bdbdbd",
+            marginHorizontal: "auto",
+            marginVertical: 5,
+          }}
+        />
+        <View style={{ width: "100%" }}>
+          <Text>Buyer OTP:</Text>
+          <View
+            style={{
+              flexDirection: "row",
+              width: "100%",
+              justifyContent: "space-between",
+            }}>
+            <TextInput
+              label='OTP'
+              value={sellerOTP}
+              // error={phoneError ? true : false}
+              onChangeText={(text) => {
+                setSellerOTP(text);
+              }}
+              mode='outlined'
+              style={{
+                height: 30,
+                width: "50%",
+                color: "#212121",
+                backgroundColor: "#ffffff",
+              }}
+            />
+            <Button
+              mode='contained'
+              // onPress={login}
+              compact={true}
+              // disabled={
+              //   !phoneErrors() && !phoneError && !passwordError ? false : true
+              // }
+              style={{
+                marginVertical: 5,
+                width: 80,
+                height: 30,
+                backgroundColor: "#81d4fa",
+                boxShadow: "0px 2px 5px 2px #bdbdbd",
+              }}
+              labelStyle={{
+                color: "#ffffff",
+                fontWeight: "700",
+                fontSize: 12,
+                letterSpacing: 1,
+              }}>
+              Match
+            </Button>
+          </View>
+        </View>
+        <Divider
+          style={{
+            height: 1,
+            width: "100%",
+            backgroundColor: "#bdbdbd",
+            marginHorizontal: "auto",
+            marginVertical: 10,
+          }}
+        />
+        <View style={{ width: "100%", marginBottom: 20 }}>
+          <Text
+            style={{
+              fontSize: 15,
+              letterSpacing: 2,
+              fontWeight: "700",
+              fontFamily: "Open Sans",
+              color: "#bdbdbd",
+              marginTop: 5,
+              marginBottom: 10,
+            }}>
+            Packeg Photo
+          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              width: "100%",
+            }}>
+            <View
+              style={{
+                width: 150,
+                height: 200,
+                backgroundColor: "#eeeeee",
+              }}></View>
+            <View
+              style={{
+                width: 150,
+                height: 200,
+                backgroundColor: "#eeeeee",
+              }}></View>
+          </View>
+        </View>
+        <Button
+          mode='contained'
+          onPress={() => navigation.goBack()}
+          style={{
+            marginVertical: 10,
+            width: 80,
+            height: 30,
+            backgroundColor: "#81d4fa",
+            boxShadow: "0px 2px 5px 2px #bdbdbd",
+          }}
+          labelStyle={{
+            color: "#ffffff",
+            fontWeight: "700",
+            fontSize: 12,
+            letterSpacing: 1,
+          }}>
+          Back
+        </Button>
       </View>
 
       <View
         style={{
           position: "absolute",
-          height: height * 0.4,
+          height: height * 0.7,
           width: "100%",
           // border: "1px solid black",
         }}>
@@ -243,7 +455,7 @@ const OrderDetails = ({ route }) => {
           </View>
         </View>
         {odrState.pickupOrder ? (
-          <View style={{ width: "100%", marginVertical: "auto", padding: 20 }}>
+          <View style={{ width: "100%", padding: 20 }}>
             <Text
               style={{
                 fontSize: 15,
@@ -389,6 +601,173 @@ const OrderDetails = ({ route }) => {
                   marginVertical: 5,
                 }}
               />
+              <View
+                style={{
+                  flex: 1,
+                  width: "100%",
+                  backgroundColor: "#ffffff",
+                  marginHorizontal: "auto",
+                  marginVertical: 5,
+                  paddingRight: 10,
+                }}>
+                <Text
+                  style={{
+                    fontSize: 15,
+                    letterSpacing: 2,
+                    fontWeight: "700",
+                    fontFamily: "Open Sans",
+                    color: "#bdbdbd",
+                    marginVertical: 5,
+                  }}>
+                  Seller Info
+                </Text>
+                <View style={{ flexDirection: "row" }}>
+                  <View>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        letterSpacing: 2,
+                        fontWeight: "400",
+                        fontFamily: "Open Sans",
+                        color: "#212121",
+                      }}>
+                      Store Name
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        letterSpacing: 2,
+                        fontWeight: "400",
+                        fontFamily: "Open Sans",
+                        color: "#212121",
+                      }}>
+                      Seller Name
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        letterSpacing: 2,
+                        fontWeight: "400",
+                        fontFamily: "Open Sans",
+                        color: "#212121",
+                      }}>
+                      Phone No
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        letterSpacing: 2,
+                        fontWeight: "400",
+                        fontFamily: "Open Sans",
+                        color: "#212121",
+                      }}>
+                      Address
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      marginLeft: 5,
+                      width: "70%",
+                    }}>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        letterSpacing: 2,
+                        fontWeight: "400",
+                        fontFamily: "Open Sans",
+                        color: "#212121",
+                      }}>
+                      :{odrState.pickupOrder.resturantId.resturant_name}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        letterSpacing: 2,
+                        fontWeight: "400",
+                        fontFamily: "Open Sans",
+                        color: "#212121",
+                      }}>
+                      :{odrState.pickupOrder.resturantId.resturant_name}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        letterSpacing: 2,
+                        fontWeight: "400",
+                        fontFamily: "Open Sans",
+                        color: "#212121",
+                      }}>
+                      :{odrState.pickupOrder.resturantId.phone}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        letterSpacing: 2,
+                        fontWeight: "400",
+                        fontFamily: "Open Sans",
+                        color: "#212121",
+                      }}>
+                      :{odrState.pickupOrder.resturantId.address}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+              <Divider
+                style={{
+                  height: 1,
+                  width: "100%",
+                  backgroundColor: "#bdbdbd",
+                  marginHorizontal: "auto",
+                  marginVertical: 5,
+                }}
+              />
+              <View style={{ width: "100%", flex: 1 }}>
+                <Text>Seller OTP:</Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    width: "100%",
+                    justifyContent: "space-between",
+                  }}>
+                  <TextInput
+                    label='OTP'
+                    value={sellerOTP}
+                    // error={phoneError ? true : false}
+                    onChangeText={(text) => {
+                      setSellerOTP(text);
+                    }}
+                    mode='outlined'
+                    style={{
+                      height: 30,
+                      width: "50%",
+                      color: "#212121",
+                      backgroundColor: "#ffffff",
+                    }}
+                  />
+                  <Button
+                    mode='contained'
+                    // onPress={login}
+                    compact={true}
+                    // disabled={
+                    //   !phoneErrors() && !phoneError && !passwordError ? false : true
+                    // }
+                    style={{
+                      marginVertical: 5,
+                      width: 80,
+                      height: 30,
+                      backgroundColor: "#81d4fa",
+                      boxShadow: "0px 2px 5px 2px #bdbdbd",
+                    }}
+                    labelStyle={{
+                      color: "#ffffff",
+                      fontWeight: "700",
+                      fontSize: 12,
+                      letterSpacing: 1,
+                    }}>
+                    Match
+                  </Button>
+                </View>
+              </View>
             </View>
           </View>
         ) : (
