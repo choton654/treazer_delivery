@@ -1,10 +1,23 @@
 import mapboxgl from "mapbox-gl/dist/mapbox-gl-csp";
 import React, { useEffect, useRef, useState } from "react";
-import { View, TouchableOpacity, Text, Dimensions } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  Text,
+  Dimensions,
+  StyleSheet,
+} from "react-native";
 const { height } = Dimensions.get("window");
+import * as ImagePicker from "expo-image-picker";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import { geoLocationState } from "./context/locationcontext";
 import { orderState } from "./context/orderContext";
-import { Divider, Button, TextInput } from "react-native-paper";
+import {
+  Divider,
+  Button,
+  TextInput,
+  ActivityIndicator,
+} from "react-native-paper";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 // eslint-disable-next-line import/no-webpack-loader-syntax
@@ -14,7 +27,6 @@ import axios from "axios";
 import BASE_URL from "../api";
 import { useNavigation } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
-
 mapboxgl.workerClass = MapboxWorker;
 mapboxgl.accessToken =
   "pk.eyJ1IjoidHJlYXplciIsImEiOiJja2xxYXJsZmgwMmJwMnBtaXR0M25leTY5In0.Iaj3HteMWU5ZQWCniy4KRA";
@@ -147,10 +159,171 @@ const OrderDetails = ({ route }) => {
     }
   }, [getAddress]);
 
+  const [image1, setImage1] = useState(null);
+  const [image2, setImage2] = useState(null);
+  const [sendImgReq1, setSendImgReq1] = useState(true);
+  const [sendImgReq2, setSendImgReq2] = useState(true);
+  const [customerPic, setCustomerPic] = useState(null);
+  const [sendImgReq3, setSendImgReq3] = useState(true);
+
+  const pickImage1 = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+      base64: true,
+    });
+    console.log(result);
+    if (!result.cancelled) {
+      let data = {
+        file: result.uri,
+        upload_preset: "treazer",
+        api_key: 489227552964764,
+      };
+      setSendImgReq1(false);
+      fetch("https://api.cloudinary.com/v1_1/treazer/image/upload", {
+        body: JSON.stringify(data),
+        headers: {
+          "content-type": "application/json",
+        },
+        method: "POST",
+      })
+        .then((res) => res.json())
+        .then((data1) => {
+          console.log(data1.secure_url);
+          setImage1(data1.secure_url);
+          setSendImgReq1(true);
+        })
+        .catch((err) => {
+          console.log(err);
+          alert("An Error Occured While Uploading");
+        });
+    }
+  };
+
+  const pickImage2 = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+      base64: true,
+    });
+    console.log(result);
+    if (!result.cancelled) {
+      let data = {
+        file: result.uri,
+        upload_preset: "treazer",
+        api_key: 489227552964764,
+      };
+      setSendImgReq2(false);
+      fetch("https://api.cloudinary.com/v1_1/treazer/image/upload", {
+        body: JSON.stringify(data),
+        headers: {
+          "content-type": "application/json",
+        },
+        method: "POST",
+      })
+        .then((res) => res.json())
+        .then((data1) => {
+          console.log(data1.secure_url);
+          setImage2(data1.secure_url);
+          setSendImgReq2(true);
+        })
+        .catch((err) => {
+          console.log(err);
+          alert("An Error Occured While Uploading");
+        });
+    }
+  };
+  const pickImage3 = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+      base64: true,
+    });
+    console.log(result);
+    if (!result.cancelled) {
+      let data = {
+        file: result.uri,
+        upload_preset: "treazer",
+        api_key: 489227552964764,
+      };
+      setSendImgReq3(false);
+      fetch("https://api.cloudinary.com/v1_1/treazer/image/upload", {
+        body: JSON.stringify(data),
+        headers: {
+          "content-type": "application/json",
+        },
+        method: "POST",
+      })
+        .then((res) => res.json())
+        .then((data1) => {
+          console.log(data1.secure_url);
+          setCustomerPic(data1.secure_url);
+          setSendImgReq3(true);
+        })
+        .catch((err) => {
+          console.log(err);
+          alert("An Error Occured While Uploading");
+        });
+    }
+  };
+
   const token = localStorage.getItem("token");
   const refreshtoken = localStorage.getItem("refresh-token");
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user && user._id;
+
+  const uploadPackagePic = () => {
+    const orderId = odrState.pickupOrder && odrState.pickupOrder._id;
+    axios
+      .post(
+        `${BASE_URL}/api/order/packageImageUpload`,
+        { deliveryboyId: userId, image1, image2, orderId },
+        {
+          headers: {
+            "x-token": token,
+            "x-refresh-token": refreshtoken,
+          },
+        }
+      )
+      .then((res) => {
+        const { order } = res.data;
+        console.log(order);
+        setImage1(null);
+        setImage2(null);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const uploadCustomerPic = () => {
+    const orderId = odrState.pickupOrder && odrState.pickupOrder._id;
+    axios
+      .post(
+        `${BASE_URL}/api/order/customerImageUpload`,
+        { deliveryboyId: userId, customerPic, orderId },
+        {
+          headers: {
+            "x-token": token,
+            "x-refresh-token": refreshtoken,
+          },
+        }
+      )
+      .then((res) => {
+        const { order } = res.data;
+        console.log(order);
+        setCustomerPic(null);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const OTPmatch = () => {
     const orderId = odrState.pickupOrder && odrState.pickupOrder._id;
@@ -177,7 +350,7 @@ const OrderDetails = ({ route }) => {
     <ScrollView style={{ flex: 1, backgroundColor: "#ffffff" }}>
       <View
         style={{
-          height: height * 1.5,
+          height: height * 1.8,
           width: "90%",
           marginHorizontal: "auto",
           alignItems: "center",
@@ -407,6 +580,7 @@ const OrderDetails = ({ route }) => {
                 fontWeight: "700",
                 fontFamily: "Open Sans",
                 color: "#bdbdbd",
+                textAlign: "center",
                 marginTop: 5,
                 marginBottom: 10,
               }}>
@@ -418,19 +592,248 @@ const OrderDetails = ({ route }) => {
                 justifyContent: "space-between",
                 width: "100%",
               }}>
-              <View
-                style={{
-                  width: 150,
-                  height: 200,
-                  backgroundColor: "#eeeeee",
-                }}></View>
-              <View
-                style={{
-                  width: 150,
-                  height: 200,
-                  backgroundColor: "#eeeeee",
-                }}></View>
+              {image1 ? (
+                <View
+                  style={{ width: 150, height: 200, marginHorizontal: "auto" }}>
+                  <LazyLoadImage
+                    src={image1}
+                    resizemode='cover'
+                    effect='blur'
+                    style={{
+                      width: 150,
+                      marginLeft: "auto",
+                      height: 200,
+                      borderRadius: 20,
+                      boxShadow: "1px 3px 6px 1px #C9CCD1",
+                      resizeMode: "contain",
+                    }}
+                  />
+                  <View
+                    style={{
+                      position: "absolute",
+                      flexDirection: "row",
+                      right: 0,
+                      background: "none",
+                      width: 30,
+                      marginRight: 20,
+                      marginTop: 15,
+                      height: 30,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: 20,
+                    }}>
+                    <TouchableOpacity onPress={() => setImage1(null)}>
+                      <Ionicons
+                        name='close-circle-outline'
+                        size={26}
+                        color='#82b1ff'
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ) : sendImgReq1 ? (
+                <TouchableOpacity style={styles.div_2} onPress={pickImage1}>
+                  <Ionicons name='add' size={26} color='#82b1ff' />
+                  <Text style={styles.text_1}>Add Top View</Text>
+                </TouchableOpacity>
+              ) : (
+                <View style={styles.div_2}>
+                  <ActivityIndicator
+                    animating={true}
+                    color='#82b1ff'
+                    size='large'
+                  />
+                </View>
+              )}
+              {image2 ? (
+                <View
+                  style={{ width: 150, height: 200, marginHorizontal: "auto" }}>
+                  <LazyLoadImage
+                    src={image2}
+                    resizemode='cover'
+                    effect='blur'
+                    style={{
+                      width: 150,
+                      marginLeft: "auto",
+                      height: 200,
+                      borderRadius: 20,
+                      boxShadow: "1px 3px 6px 1px #C9CCD1",
+                      resizeMode: "contain",
+                    }}
+                  />
+                  <View
+                    style={{
+                      position: "absolute",
+                      flexDirection: "row",
+                      right: 0,
+                      background: "none",
+                      width: 30,
+                      marginRight: 20,
+                      marginTop: 15,
+                      height: 30,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: 20,
+                    }}>
+                    <TouchableOpacity onPress={() => setImage2(null)}>
+                      <Ionicons
+                        name='close-circle-outline'
+                        size={26}
+                        color='#82b1ff'
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ) : sendImgReq2 ? (
+                <TouchableOpacity style={styles.div_2} onPress={pickImage2}>
+                  <Ionicons name='add' size={26} color='#82b1ff' />
+                  <Text style={styles.text_1}>Add Side View</Text>
+                </TouchableOpacity>
+              ) : (
+                <View style={styles.div_2}>
+                  <ActivityIndicator
+                    animating={true}
+                    color='#82b1ff'
+                    size='large'
+                  />
+                </View>
+              )}
             </View>
+            <Button
+              mode='contained'
+              onPress={uploadPackagePic}
+              style={{
+                marginTop: 20,
+                width: "80%",
+                height: 30,
+                marginHorizontal: "auto",
+                backgroundColor: "#81d4fa",
+                boxShadow: "0px 2px 5px 2px #bdbdbd",
+              }}
+              labelStyle={{
+                color: "#ffffff",
+                fontWeight: "700",
+                fontSize: 15,
+                letterSpacing: 1,
+              }}>
+              Upload Package Pic
+            </Button>
+            <View style={{ marginTop: 10 }}>
+              <Text
+                style={{
+                  fontSize: 15,
+                  letterSpacing: 2,
+                  fontWeight: "700",
+                  fontFamily: "Open Sans",
+                  color: "#bdbdbd",
+                  textAlign: "center",
+                  marginTop: 10,
+                  marginBottom: 10,
+                }}>
+                Customer's Smile
+              </Text>
+              {customerPic ? (
+                <View
+                  style={{
+                    width: "100%",
+                    height: 200,
+                    marginHorizontal: "auto",
+                  }}>
+                  <LazyLoadImage
+                    src={customerPic}
+                    resizemode='cover'
+                    effect='blur'
+                    style={{
+                      width: "100%",
+                      margin: "auto",
+                      height: 200,
+                      borderRadius: 20,
+                      boxShadow: "1px 3px 6px 1px #C9CCD1",
+                      resizeMode: "contain",
+                    }}
+                  />
+                  <View
+                    style={{
+                      position: "absolute",
+                      flexDirection: "row",
+                      right: 0,
+                      background: "none",
+                      width: 30,
+                      marginRight: 20,
+                      marginTop: 15,
+                      height: 30,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: 20,
+                    }}>
+                    <TouchableOpacity onPress={() => setCustomerPic(null)}>
+                      <Ionicons
+                        name='close-circle-outline'
+                        size={26}
+                        color='#82b1ff'
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ) : sendImgReq3 ? (
+                <TouchableOpacity
+                  style={{
+                    width: "100%",
+                    marginHorizontal: "auto",
+                    height: 200,
+                    backgroundColor: "#eeeeee",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    textAlign: "center",
+                    borderRadius: 20,
+                    boxShadow: "1px 3px 6px 1px #C9CCD1",
+                    padding: 10,
+                  }}
+                  onPress={pickImage3}>
+                  <Ionicons name='add' size={26} color='#82b1ff' />
+                  <Text style={styles.text_1}>Add Side View</Text>
+                </TouchableOpacity>
+              ) : (
+                <View
+                  style={{
+                    width: "100%",
+                    marginHorizontal: "auto",
+                    height: 200,
+                    backgroundColor: "#eeeeee",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    textAlign: "center",
+                    borderRadius: 20,
+                    boxShadow: "1px 3px 6px 1px #C9CCD1",
+                    padding: 10,
+                  }}>
+                  <ActivityIndicator
+                    animating={true}
+                    color='#82b1ff'
+                    size='large'
+                  />
+                </View>
+              )}
+            </View>
+            <Button
+              mode='contained'
+              onPress={uploadCustomerPic}
+              style={{
+                marginTop: 20,
+                width: "80%",
+                height: 30,
+                marginHorizontal: "auto",
+                backgroundColor: "#81d4fa",
+                boxShadow: "0px 2px 5px 2px #bdbdbd",
+              }}
+              labelStyle={{
+                color: "#ffffff",
+                fontWeight: "700",
+                fontSize: 15,
+                letterSpacing: 1,
+              }}>
+              Upload Customer Pic
+            </Button>
           </View>
         )}
 
@@ -838,4 +1241,24 @@ const OrderDetails = ({ route }) => {
 
 export default OrderDetails;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  div_2: {
+    width: 150,
+    marginHorizontal: "auto",
+    height: 200,
+    backgroundColor: "#eeeeee",
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
+    borderRadius: 20,
+    boxShadow: "1px 3px 6px 1px #C9CCD1",
+    padding: 10,
+  },
+  text_1: {
+    marginVertical: 10,
+    color: "#9e9e9e",
+    letterSpacing: 1,
+    fontSize: 15,
+    textShadow: "1px 0 #e0e0e0",
+  },
+});
