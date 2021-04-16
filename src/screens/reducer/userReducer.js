@@ -1,9 +1,7 @@
 export const initialState = {
   user: null,
   isLogin: localStorage.getItem("token") ? true : false,
-  // deliveryType: localStorage.getItem("user")
-  //   ? JSON.parse(localStorage.getItem("user")).deliveryType
-  //   : "none",
+  deliveryBoys: null,
   notification: [],
   error: null,
 };
@@ -25,6 +23,12 @@ export const reducer = (state, action) => {
       return {
         ...state,
         isLogin: false,
+        user: null,
+      };
+    case "GET_DELIVERY_BOY_BY_ADMIN":
+      return {
+        ...state,
+        deliveryBoys: action.payload,
       };
     // case "SET_USER_ROLE":
     //   return {

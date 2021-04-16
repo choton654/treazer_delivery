@@ -57,6 +57,11 @@ const Login = () => {
           setLoginReq(true);
           if (user.isAdminAccountHold) {
             navigation.navigate("Account_Hold");
+          } else if (
+            user.deliveryType === "admin" &&
+            user.isAdminAccountHold === false
+          ) {
+            navigation.navigate("Admin_Dashboard");
           } else if (user.deliveryType === "none") {
             navigation.navigate("Details");
           } else {

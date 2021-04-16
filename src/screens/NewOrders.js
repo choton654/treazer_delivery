@@ -21,8 +21,10 @@ const NewOrders = () => {
   const deliveryType = user && user.deliveryType;
 
   useEffect(() => {
-    if (!odrState.orders || odrState.orders.length === 0) {
-      getAllOrders();
+    if (odrState !== undefined) {
+      if (!odrState.orders || odrState.orders.length === 0) {
+        getAllOrders();
+      }
     }
   }, []);
 
@@ -82,7 +84,7 @@ const NewOrders = () => {
         width: "100%",
         backgroundColor: "#ffffff",
       }}>
-      {odrState.orders ? (
+      {odrState !== undefined && odrState.orders ? (
         odrState.orders.length > 0 ? (
           odrState.orders.map((order, idx) => (
             <View

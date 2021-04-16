@@ -7,23 +7,24 @@ import "react-lazy-load-image-component/src/effects/blur.css";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import "./tab.css";
-import { useNavigation } from "@react-navigation/native";
+// import { useNavigation } from "@react-navigation/native";
 const { height } = Dimensions.get("window");
 const NewOrders = lazy(() => import("./NewOrders"));
 const AssignedOrders = lazy(() => import("./AssignedOrders"));
 import { orderState } from "./context/orderContext";
+import { userState } from "./context/userContext";
 
 const Dashboard = () => {
   const { state: odrState, dispatch: orderDispatch } = orderState();
-  const navigation = useNavigation();
-  // const logout = () => {
-  //   localStorage.removeItem("token");
-  //   localStorage.removeItem("refresh-token");
-  //   orderDispatch({ type: "LOGOUT_USER" });
-  // };
-  const changeOrderType = () => {
-    navigation.navigate("Details");
+  // const navigation = useNavigation();
+  const { dispatch } = userState();
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("refresh-token");
+    dispatch({ type: "LOGOUT_USER" });
+    orderDispatch({ type: "EMPTY_ORDER" });
   };
+
   return (
     <View style={styles.v1}>
       <View
@@ -88,7 +89,7 @@ const Dashboard = () => {
           </Text>
           <Button
             mode='contained'
-            onPress={changeOrderType}
+            onPress={logout}
             style={{
               marginVertical: 20,
               marginHorizontal: "auto",
@@ -102,7 +103,7 @@ const Dashboard = () => {
               fontSize: 15,
               letterSpacing: 2,
             }}>
-            Contact Treazer team
+            Log Out
           </Button>
         </View>
       ) : (

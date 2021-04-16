@@ -34,7 +34,7 @@ mapboxgl.accessToken =
 const OrderDetails = ({ route }) => {
   const navigation = useNavigation();
   const { state: locationState } = geoLocationState();
-  const { state: odrState, dispatch: orderDispatch } = orderState();
+  const { state: odrState } = orderState();
   const mapContainer = useRef();
   const [lng, setLng] = useState(locationState.longitude);
   const [lat, setLat] = useState(locationState.latitude);
@@ -898,7 +898,7 @@ const OrderDetails = ({ route }) => {
                 letterSpacing: 1,
                 marginVertical: "auto",
               }}>
-              Dashboard
+              Order Details
             </Text>
           </View>
         </View>
