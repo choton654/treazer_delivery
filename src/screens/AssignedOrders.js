@@ -117,13 +117,25 @@ const AssignedOrders = ({ setVisible }) => {
       .then((res) => {
         const { rejectedOrder, msg } = res.data;
         console.log(msg);
-
         setVisible(true);
         orderDispatch({
           type: "REJECT_ORDER",
           payload: rejectedOrder,
         });
         setPickupOrderReq(true);
+        axios
+          .get(`${BASE_URL}/newOrderNotification`, {
+            headers: {
+              "x-token": token,
+              "x-refresh-token": refreshtoken,
+            },
+          })
+          .then((res2) => {
+            console.log(res2.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       })
       .catch((err) => {
         console.log(err);
