@@ -7,7 +7,7 @@ import axios from "axios";
 import BASE_URL from "../api";
 import { orderState } from "./context/orderContext";
 
-const NewOrders = () => {
+const NewOrders = ({ setVisible1 }) => {
   const { state: odrState, dispatch: orderDispatch } = orderState();
 
   const [acceptOrderReq, setAcceptOrderReq] = useState(true);
@@ -68,14 +68,19 @@ const NewOrders = () => {
         }
       )
       .then((res) => {
-        const { acceptedOrder, msg } = res.data;
+        const { acceptedOrder } = res.data;
         console.log(acceptedOrder);
         orderDispatch({ type: "ACCEPT_ORDER", payload: acceptedOrder });
         setAcceptOrderReq(true);
+        setVisible1(true);
       })
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  const rejectOrder = (orderId) => {
+    orderDispatch({ type: "REJECT_NEW_ORDER", payload: orderId });
   };
 
   return (
@@ -258,7 +263,7 @@ const NewOrders = () => {
                     </Button>
                     <Button
                       mode='contained'
-                      //   onPress={() => navigation.navigate("Details")}
+                      onPress={() => rejectOrder(order._id)}
                       style={{
                         marginBottom: 10,
                         width: "20%",

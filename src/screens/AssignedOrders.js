@@ -3,18 +3,19 @@ import { StyleSheet, Text, View, ScrollView, Dimensions } from "react-native";
 const { height } = Dimensions.get("window");
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { Button, ActivityIndicator } from "react-native-paper";
+import { Button, ActivityIndicator, Snackbar } from "react-native-paper";
 import axios from "axios";
 import BASE_URL from "../api";
 import { orderState } from "./context/orderContext";
 
-const AssignedOrders = () => {
+const AssignedOrders = ({ setVisible }) => {
   const { state: odrState, dispatch: orderDispatch } = orderState();
   const [assignedOrderReq, setAssignedOrderReq] = useState(true);
   const [pickuporderReq, setPickupOrderReq] = useState(true);
+
   const navigation = useNavigation();
   useEffect(() => {
-    if (!odrState.assignedOrders) {
+    if (odrState.assignedOrders && odrState.assignedOrders.length === 0) {
       get_assigned_order();
     }
   }, []);
@@ -100,7 +101,34 @@ const AssignedOrders = () => {
         console.log(err);
       });
   };
+  const rejectOrder = (orderId) => {
+    setPickupOrderReq(false);
+    axios
+      .post(
+        `${BASE_URL}/api/order/rejectOrder`,
+        { deliveryboyId: userId, orderId },
+        {
+          headers: {
+            "x-token": token,
+            "x-refresh-token": refreshtoken,
+          },
+        }
+      )
+      .then((res) => {
+        const { rejectedOrder, msg } = res.data;
+        console.log(msg);
 
+        setVisible(true);
+        orderDispatch({
+          type: "REJECT_ORDER",
+          payload: rejectedOrder,
+        });
+        setPickupOrderReq(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   return assignedOrderReq ? (
     <ScrollView
       contentContainerStyle={{
@@ -300,7 +328,7 @@ const AssignedOrders = () => {
                   </Button>
                   <Button
                     mode='contained'
-                    //   onPress={() => navigation.navigate("Details")}
+                    onPress={() => rejectOrder(order._id)}
                     style={{
                       marginBottom: 10,
                       width: "20%",

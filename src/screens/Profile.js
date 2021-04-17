@@ -130,6 +130,22 @@ const Profile = () => {
               </Text>
             </Text>
           )}
+          {state.user.adminCode && (
+            <Text
+              style={{
+                color: "#212121",
+                fontSize: 15,
+                fontWeight: "600",
+                letterSpacing: 1,
+                textAlign: "center",
+                marginVertical: 5,
+              }}>
+              Admin ID:
+              <Text style={{ marginHorizontal: 10 }}>
+                {state.user.adminCode}
+              </Text>
+            </Text>
+          )}
         </View>
         <Button
           mode='contained'

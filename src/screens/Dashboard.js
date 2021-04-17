@@ -1,7 +1,7 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useState } from "react";
 import { lazy } from "@loadable/component";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
-import { Button, ActivityIndicator } from "react-native-paper";
+import { Button, ActivityIndicator, Snackbar } from "react-native-paper";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
@@ -24,7 +24,10 @@ const Dashboard = () => {
     dispatch({ type: "LOGOUT_USER" });
     orderDispatch({ type: "EMPTY_ORDER" });
   };
-
+  const [visible, setVisible] = useState(false);
+  const onDismissSnackBar = () => setVisible(false);
+  const [visible1, setVisible1] = useState(false);
+  const onDismissSnackBar1 = () => setVisible1(false);
   return (
     <View style={styles.v1}>
       <View
@@ -147,8 +150,19 @@ const Dashboard = () => {
                     />
                   </View>
                 }>
-                <NewOrders />
+                <NewOrders setVisible1={setVisible1} />
               </Suspense>
+              <Snackbar
+                visible={visible1}
+                onDismiss={onDismissSnackBar1}
+                action={{
+                  label: "Close",
+                  onPress: () => {
+                    onDismissSnackBar1();
+                  },
+                }}>
+                You have accepted an order
+              </Snackbar>
             </View>
           </TabPanel>
           <TabPanel>
@@ -156,7 +170,7 @@ const Dashboard = () => {
               style={{
                 height: height * 0.7,
                 width: "100%",
-                //   border: "1px solid black",
+                // border: "1px solid black",
               }}>
               <Suspense
                 fallback={
@@ -177,8 +191,19 @@ const Dashboard = () => {
                     />
                   </View>
                 }>
-                <AssignedOrders />
+                <AssignedOrders setVisible={setVisible} />
               </Suspense>
+              <Snackbar
+                visible={visible}
+                onDismiss={onDismissSnackBar}
+                action={{
+                  label: "Close",
+                  onPress: () => {
+                    onDismissSnackBar();
+                  },
+                }}>
+                You have rejected an order
+              </Snackbar>
             </View>
           </TabPanel>
         </Tabs>

@@ -1,8 +1,9 @@
 export const initialState = {
   orders: null,
-  assignedOrders: null,
+  assignedOrders: [],
   pickupOrder: null,
   completedOrders: [],
+  myBoysOrder: [],
   error: null,
 };
 
@@ -41,6 +42,25 @@ export const reducer = (state, action) => {
         ...state,
         assignedOrders: action.payload,
       };
+    case "REJECT_ORDER":
+      return {
+        ...state,
+        orders: [...state.orders, action.payload],
+        assignedOrders: state.assignedOrders.filter((order) => {
+          if (order._id.toString() !== action.payload._id.toString()) {
+            return order;
+          } else {
+            return null;
+          }
+        }),
+      };
+    case "REJECT_NEW_ORDER":
+      return {
+        ...state,
+        orders: state.orders.filter(
+          (order) => order._id.toString() !== action.payload.toString()
+        ),
+      };
     case "PICKUP_ORDERS":
       return {
         ...state,
@@ -62,6 +82,17 @@ export const reducer = (state, action) => {
       return {
         ...state,
         completedOrders: action.payload,
+      };
+    case "ORDER_DONE":
+      return {
+        ...state,
+
+        completedOrders: [...state.completedOrders, action.payload],
+      };
+    case "MY_BOYS_COMPLETED_ORDERS":
+      return {
+        ...state,
+        myBoysOrder: action.payload,
       };
   }
 };

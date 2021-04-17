@@ -17,6 +17,10 @@ import {
   Button,
   TextInput,
   ActivityIndicator,
+  Dialog,
+  Portal,
+  Snackbar,
+  Paragraph,
 } from "react-native-paper";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
@@ -34,12 +38,14 @@ mapboxgl.accessToken =
 const OrderDetails = ({ route }) => {
   const navigation = useNavigation();
   const { state: locationState } = geoLocationState();
-  const { state: odrState } = orderState();
+  const { state: odrState, dispatch: orderDispatch } = orderState();
   const mapContainer = useRef();
   const [lng, setLng] = useState(locationState.longitude);
   const [lat, setLat] = useState(locationState.latitude);
   const [zoom, setZoom] = useState(15);
   const [getAddress, setGetAddress] = useState(false);
+  const [getRestaurantAddress, setGetRestaurantAddress] = useState(true);
+
   const [sellerOTP, setSellerOTP] = useState("");
   const [buyerOTP, setBuyerOTP] = useState("");
 
@@ -52,6 +58,17 @@ const OrderDetails = ({ route }) => {
     odrState.pickupOrder.shippingaddress.coordinates &&
     odrState.pickupOrder.shippingaddress.coordinates[1];
 
+  const restaurantAddressLongitude =
+    odrState.pickupOrder &&
+    odrState.pickupOrder.resturantId.location &&
+    odrState.pickupOrder.resturantId.location.coordinates &&
+    odrState.pickupOrder.resturantId.location.coordinates[0];
+  const restaurantAddressLattitude =
+    odrState.pickupOrder &&
+    odrState.pickupOrder.resturantId.location &&
+    odrState.pickupOrder.resturantId.location.coordinates &&
+    odrState.pickupOrder.resturantId.location.coordinates[1];
+  console.log(restaurantAddressLongitude, restaurantAddressLattitude);
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: mapContainer.current,
@@ -86,24 +103,25 @@ const OrderDetails = ({ route }) => {
     map.addControl(geolocate);
 
     // Set options
-    const userMarker = new mapboxgl.Marker({
+    new mapboxgl.Marker({
       color: "#d32f2f",
       draggable: false,
     })
       .setLngLat([locationState.longitude, locationState.latitude])
       .addTo(map);
 
-    map.addControl(userMarker);
-
-    var destinationMarker = new mapboxgl.Marker({
+    new mapboxgl.Marker({
       color: "#4caf50",
       draggable: false,
     })
       .setLngLat([orderAddressLongitude, orderAddressLattitude])
       .addTo(map);
-
-    map.addControl(destinationMarker);
-
+    new mapboxgl.Marker({
+      color: "#fbc02d",
+      draggable: false,
+    })
+      .setLngLat([restaurantAddressLongitude, restaurantAddressLattitude])
+      .addTo(map);
     if (getAddress) {
       map.on("load", () => {
         axios
@@ -111,7 +129,7 @@ const OrderDetails = ({ route }) => {
             `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${locationState.longitude}%2C${locationState.latitude}%3B${orderAddressLongitude}%2C${orderAddressLattitude}?alternatives=true&geometries=geojson&steps=true&access_token=pk.eyJ1IjoidHJlYXplciIsImEiOiJja2xxYXJsZmgwMmJwMnBtaXR0M25leTY5In0.Iaj3HteMWU5ZQWCniy4KRA`
           )
           .then((res) => {
-            console.log(res.data.routes[0]);
+            // console.log(res.data.routes[0]);
             const route2 = res.data.routes[0].geometry.coordinates;
             const geojson = {
               type: "Feature",
@@ -157,7 +175,61 @@ const OrderDetails = ({ route }) => {
           });
       });
     }
-  }, [getAddress]);
+
+    if (getRestaurantAddress) {
+      map.on("load", () => {
+        axios
+          .get(
+            `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${locationState.longitude}%2C${locationState.latitude}%3B${restaurantAddressLongitude}%2C${restaurantAddressLattitude}?alternatives=true&geometries=geojson&steps=true&access_token=pk.eyJ1IjoidHJlYXplciIsImEiOiJja2xxYXJsZmgwMmJwMnBtaXR0M25leTY5In0.Iaj3HteMWU5ZQWCniy4KRA`
+          )
+          .then((res) => {
+            // console.log(res.data.routes[0]);
+            const route2 = res.data.routes[0].geometry.coordinates;
+            const geojson = {
+              type: "Feature",
+              properties: {},
+              geometry: {
+                type: "LineString",
+                coordinates: route2,
+              },
+            };
+            // if the route already exists on the map, reset it using setData
+            if (map.getSource("route")) {
+              map.getSource("route").setData(geojson);
+            } else {
+              // otherwise, make a new request
+              map.addLayer({
+                id: "route",
+                type: "line",
+                source: {
+                  type: "geojson",
+                  data: {
+                    type: "Feature",
+                    properties: {},
+                    geometry: {
+                      type: "LineString",
+                      coordinates: route2,
+                    },
+                  },
+                },
+                layout: {
+                  "line-join": "round",
+                  "line-cap": "round",
+                },
+                paint: {
+                  "line-color": "#ffab00",
+                  "line-width": 5,
+                  "line-opacity": 1,
+                },
+              });
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      });
+    }
+  }, [getAddress, getRestaurantAddress]);
 
   const [image1, setImage1] = useState(null);
   const [image2, setImage2] = useState(null);
@@ -324,9 +396,14 @@ const OrderDetails = ({ route }) => {
         console.log(err);
       });
   };
-
+  const [OTPreq, setOTPreq] = useState(true);
+  const [visible, setVisible] = useState(false);
+  const [visible1, setVisible1] = useState(false);
+  const [OTPmsg, setOTPmsg] = useState("");
+  const hideDialog = () => setVisible(false);
   const OTPmatch = () => {
     const orderId = odrState.pickupOrder && odrState.pickupOrder._id;
+    setOTPreq(false);
     axios
       .post(
         `${BASE_URL}/api/order/orderOTPmatch`,
@@ -340,10 +417,33 @@ const OrderDetails = ({ route }) => {
       )
       .then((res) => {
         console.log(res.data);
+        const { msg } = res.data;
+        if (msg === "Seller OTP matched") {
+          odrState.pickupOrder.isSellerOTPmatched = true;
+        } else if (msg === "Buyer OTP matched") {
+          odrState.pickupOrder.isBuyerOTPmatched = true;
+          odrState.pickupOrder.isPaid = true;
+          odrState.pickupOrder.isDelivered = true;
+          odrState.pickupOrder.COD = true;
+        }
+        setVisible(true);
+        setOTPmsg(msg);
+        setOTPreq(true);
       })
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  const orderDone = () => {
+    if (!odrState.pickupOrder) {
+      setVisible1(true);
+    } else if (odrState.pickupOrder && !odrState.pickupOrder.isPaid) {
+      setVisible1(true);
+    } else if (odrState.pickupOrder && odrState.pickupOrder.isPaid) {
+      orderDispatch({ type: "ORDER_DONE", payload: odrState.pickupOrder });
+      navigation.navigate("Tabs", { screen: "CompleteOrder" });
+    }
   };
 
   return (
@@ -372,6 +472,7 @@ const OrderDetails = ({ route }) => {
           onPress={() => {
             // navigation.goBack();
             setGetAddress(!getAddress);
+            setGetRestaurantAddress(!getRestaurantAddress);
           }}
           style={{
             width: "80%",
@@ -393,7 +494,7 @@ const OrderDetails = ({ route }) => {
               fontSize: 20,
               color: "#ffffff",
             }}>
-            On/Off Route
+            Switch Route
           </Text>
         </TouchableOpacity>
         {odrState.pickupOrder ? (
@@ -412,7 +513,7 @@ const OrderDetails = ({ route }) => {
                   letterSpacing: 2,
                   fontWeight: "700",
                   fontFamily: "Open Sans",
-                  color: "#bdbdbd",
+                  color: "#37474f",
                   marginVertical: 5,
                 }}>
                 Buyer Info
@@ -497,54 +598,92 @@ const OrderDetails = ({ route }) => {
                 marginVertical: 5,
               }}
             />
-            <View style={{ width: "100%" }}>
-              <Text>Buyer OTP:</Text>
+            {odrState.pickupOrder.isBuyerOTPmatched ? (
               <View
                 style={{
-                  flexDirection: "row",
                   width: "100%",
-                  justifyContent: "space-between",
+                  height: 60,
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}>
-                <TextInput
-                  label='OTP'
-                  value={buyerOTP}
-                  // error={phoneError ? true : false}
-                  onChangeText={(text) => {
-                    setBuyerOTP(text);
-                    setSellerOTP("");
-                  }}
-                  mode='outlined'
+                <Text
                   style={{
-                    height: 30,
-                    width: "50%",
-                    color: "#212121",
-                    backgroundColor: "#ffffff",
-                  }}
-                />
-                <Button
-                  mode='contained'
-                  onPress={OTPmatch}
-                  compact={true}
-                  // disabled={
-                  //   !phoneErrors() && !phoneError && !passwordError ? false : true
-                  // }
-                  style={{
-                    marginVertical: 5,
-                    width: 80,
-                    height: 30,
-                    backgroundColor: "#81d4fa",
-                    boxShadow: "0px 2px 5px 2px #bdbdbd",
-                  }}
-                  labelStyle={{
-                    color: "#ffffff",
-                    fontWeight: "700",
-                    fontSize: 12,
-                    letterSpacing: 1,
+                    textAlign: "center",
+                    fontSize: 15,
+                    fontWeight: "900",
+                    color: "#00c853",
+                    letterSpacing: 2,
                   }}>
-                  Match
-                </Button>
+                  Buyer OTP matched
+                </Text>
               </View>
-            </View>
+            ) : (
+              <View style={{ width: "100%" }}>
+                <Text
+                  style={{
+                    fontSize: 15,
+                    fontWeight: "700",
+                    color: "#37474f",
+                    letterSpacing: 2,
+                  }}>
+                  Buyer OTP:
+                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    width: "100%",
+                    justifyContent: "space-between",
+                  }}>
+                  <TextInput
+                    label='OTP'
+                    value={buyerOTP}
+                    // error={phoneError ? true : false}
+                    onChangeText={(text) => {
+                      setBuyerOTP(text);
+                      setSellerOTP("");
+                    }}
+                    mode='outlined'
+                    style={{
+                      height: 30,
+                      width: "50%",
+                      color: "#212121",
+                      backgroundColor: "#ffffff",
+                    }}
+                  />
+                  {OTPreq ? (
+                    <Button
+                      mode='contained'
+                      onPress={OTPmatch}
+                      compact={true}
+                      // disabled={
+                      //   !phoneErrors() && !phoneError && !passwordError ? false : true
+                      // }
+                      style={{
+                        marginVertical: 5,
+                        width: 80,
+                        height: 30,
+                        backgroundColor: "#81d4fa",
+                        boxShadow: "0px 2px 5px 2px #bdbdbd",
+                      }}
+                      labelStyle={{
+                        color: "#ffffff",
+                        fontWeight: "700",
+                        fontSize: 12,
+                        letterSpacing: 1,
+                      }}>
+                      Match
+                    </Button>
+                  ) : (
+                    <ActivityIndicator
+                      animating={true}
+                      color='#82b1ff'
+                      size='small'
+                      style={{ marginRight: 20 }}
+                    />
+                  )}
+                </View>
+              </View>
+            )}
           </View>
         ) : (
           <View style={{ width: "100%", marginVertical: "auto", padding: 20 }}>
@@ -836,25 +975,53 @@ const OrderDetails = ({ route }) => {
             </Button>
           </View>
         )}
-
-        <Button
-          mode='contained'
-          onPress={() => navigation.goBack()}
+        <View
           style={{
-            marginVertical: 10,
-            width: 80,
-            height: 30,
-            backgroundColor: "#81d4fa",
-            boxShadow: "0px 2px 5px 2px #bdbdbd",
-          }}
-          labelStyle={{
-            color: "#ffffff",
-            fontWeight: "700",
-            fontSize: 12,
-            letterSpacing: 1,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            width: "100%",
+            marginBottom: 20,
           }}>
-          Back
-        </Button>
+          <Button
+            mode='contained'
+            onPress={() => navigation.goBack()}
+            style={{
+              marginVertical: 10,
+              width: 30,
+              height: 30,
+              borderRadius: 5,
+              backgroundColor: "#ffffff",
+              justifyContent: "center",
+              alignItems: "center",
+              boxShadow: "0px 2px 5px 2px #bdbdbd",
+            }}>
+            <Ionicons name='return-down-back' size={30} color='#c62828' />
+          </Button>
+          <Button
+            mode='contained'
+            onPress={orderDone}
+            style={{
+              marginVertical: 10,
+              width: 30,
+              height: 30,
+              borderRadius: 5,
+              backgroundColor: "#ffffff",
+              justifyContent: "center",
+              alignItems: "center",
+              boxShadow: "0px 2px 5px 2px #bdbdbd",
+            }}>
+            <Ionicons name='checkmark-sharp' size={30} color='#2e7d32' />
+          </Button>
+          <Snackbar
+            visible={visible1}
+            onDismiss={() => setVisible1(false)}
+            action={{
+              label: "Close",
+              onPress: () => setVisible1(false),
+            }}>
+            OOPS!! payment is not done.
+          </Snackbar>
+        </View>
       </View>
 
       <View
@@ -1064,7 +1231,7 @@ const OrderDetails = ({ route }) => {
                     letterSpacing: 2,
                     fontWeight: "700",
                     fontFamily: "Open Sans",
-                    color: "#bdbdbd",
+                    color: "#37474f",
                     marginVertical: 5,
                   }}>
                   Seller Info
@@ -1081,16 +1248,7 @@ const OrderDetails = ({ route }) => {
                       }}>
                       Store Name
                     </Text>
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        letterSpacing: 2,
-                        fontWeight: "400",
-                        fontFamily: "Open Sans",
-                        color: "#212121",
-                      }}>
-                      Seller Name
-                    </Text>
+
                     <Text
                       style={{
                         fontSize: 12,
@@ -1135,16 +1293,6 @@ const OrderDetails = ({ route }) => {
                         fontFamily: "Open Sans",
                         color: "#212121",
                       }}>
-                      :{odrState.pickupOrder.resturantId.resturant_name}
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        letterSpacing: 2,
-                        fontWeight: "400",
-                        fontFamily: "Open Sans",
-                        color: "#212121",
-                      }}>
                       :{odrState.pickupOrder.resturantId.phone}
                     </Text>
                     <Text
@@ -1169,54 +1317,92 @@ const OrderDetails = ({ route }) => {
                   marginVertical: 5,
                 }}
               />
-              <View style={{ width: "100%", flex: 1 }}>
-                <Text>Seller OTP:</Text>
+              {odrState.pickupOrder.isSellerOTPmatched ? (
                 <View
                   style={{
-                    flexDirection: "row",
                     width: "100%",
-                    justifyContent: "space-between",
+                    height: 60,
+                    justifyContent: "center",
+                    alignItems: "center",
                   }}>
-                  <TextInput
-                    label='OTP'
-                    value={sellerOTP}
-                    // error={phoneError ? true : false}
-                    onChangeText={(text) => {
-                      setSellerOTP(text);
-                      setBuyerOTP("");
-                    }}
-                    mode='outlined'
+                  <Text
                     style={{
-                      height: 30,
-                      width: "50%",
-                      color: "#212121",
-                      backgroundColor: "#ffffff",
-                    }}
-                  />
-                  <Button
-                    mode='contained'
-                    onPress={OTPmatch}
-                    compact={true}
-                    // disabled={
-                    //   !phoneErrors() && !phoneError && !passwordError ? false : true
-                    // }
-                    style={{
-                      marginVertical: 5,
-                      width: 80,
-                      height: 30,
-                      backgroundColor: "#81d4fa",
-                      boxShadow: "0px 2px 5px 2px #bdbdbd",
-                    }}
-                    labelStyle={{
-                      color: "#ffffff",
-                      fontWeight: "700",
-                      fontSize: 12,
-                      letterSpacing: 1,
+                      textAlign: "center",
+                      fontSize: 15,
+                      fontWeight: "900",
+                      color: "#00c853",
+                      letterSpacing: 2,
                     }}>
-                    Match
-                  </Button>
+                    Seller OTP matched
+                  </Text>
                 </View>
-              </View>
+              ) : (
+                <View style={{ width: "100%", flex: 1 }}>
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      fontWeight: "700",
+                      color: "#37474f",
+                      letterSpacing: 2,
+                    }}>
+                    Seller OTP:
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      width: "100%",
+                      justifyContent: "space-between",
+                    }}>
+                    <TextInput
+                      label='OTP'
+                      value={sellerOTP}
+                      // error={phoneError ? true : false}
+                      onChangeText={(text) => {
+                        setSellerOTP(text);
+                        setBuyerOTP("");
+                      }}
+                      mode='outlined'
+                      style={{
+                        height: 30,
+                        width: "50%",
+                        color: "#212121",
+                        backgroundColor: "#ffffff",
+                      }}
+                    />
+                    {OTPreq ? (
+                      <Button
+                        mode='contained'
+                        onPress={OTPmatch}
+                        compact={true}
+                        // disabled={
+                        //   !phoneErrors() && !phoneError && !passwordError ? false : true
+                        // }
+                        style={{
+                          marginVertical: 5,
+                          width: 80,
+                          height: 30,
+                          backgroundColor: "#81d4fa",
+                          boxShadow: "0px 2px 5px 2px #bdbdbd",
+                        }}
+                        labelStyle={{
+                          color: "#ffffff",
+                          fontWeight: "700",
+                          fontSize: 12,
+                          letterSpacing: 1,
+                        }}>
+                        Match
+                      </Button>
+                    ) : (
+                      <ActivityIndicator
+                        animating={true}
+                        color='#82b1ff'
+                        size='small'
+                        style={{ marginRight: 20 }}
+                      />
+                    )}
+                  </View>
+                </View>
+              )}
             </View>
           </View>
         ) : (
@@ -1235,6 +1421,23 @@ const OrderDetails = ({ route }) => {
           </View>
         )}
       </View>
+      <Portal>
+        <Dialog visible={visible} onDismiss={hideDialog}>
+          <Dialog.Content
+            style={{ justifyContent: "center", alignItems: "center" }}>
+            <Paragraph
+              style={{
+                fontSize: 15,
+                fontWeight: "700",
+                textAlign: "center",
+                letterSpacing: 2,
+              }}>
+              {" "}
+              {OTPmsg}
+            </Paragraph>
+          </Dialog.Content>
+        </Dialog>
+      </Portal>
     </ScrollView>
   );
 };
