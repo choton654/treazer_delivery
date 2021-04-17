@@ -86,8 +86,10 @@ export const reducer = (state, action) => {
     case "ORDER_DONE":
       return {
         ...state,
-
-        completedOrders: [...state.completedOrders, action.payload],
+        pickupOrder: null,
+        assignedOrders: state.assignedOrders.filter(
+          (order) => order._id.toString() !== action.payload._id.toString()
+        ),
       };
     case "MY_BOYS_COMPLETED_ORDERS":
       return {

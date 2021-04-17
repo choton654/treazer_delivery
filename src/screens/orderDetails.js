@@ -417,15 +417,8 @@ const OrderDetails = ({ route }) => {
       )
       .then((res) => {
         console.log(res.data);
-        const { msg } = res.data;
-        if (msg === "Seller OTP matched") {
-          odrState.pickupOrder.isSellerOTPmatched = true;
-        } else if (msg === "Buyer OTP matched") {
-          odrState.pickupOrder.isBuyerOTPmatched = true;
-          odrState.pickupOrder.isPaid = true;
-          odrState.pickupOrder.isDelivered = true;
-          odrState.pickupOrder.COD = true;
-        }
+        const { order, msg } = res.data;
+        orderDispatch({ type: "GET_ONE_PICKUP_ORDER", payload: order });
         setVisible(true);
         setOTPmsg(msg);
         setOTPreq(true);
@@ -441,8 +434,30 @@ const OrderDetails = ({ route }) => {
     } else if (odrState.pickupOrder && !odrState.pickupOrder.isPaid) {
       setVisible1(true);
     } else if (odrState.pickupOrder && odrState.pickupOrder.isPaid) {
-      orderDispatch({ type: "ORDER_DONE", payload: odrState.pickupOrder });
-      navigation.navigate("Tabs", { screen: "CompleteOrder" });
+      axios
+        .post(
+          `${BASE_URL}/api/order/completedOrder`,
+          { deliveryboyId: userId },
+          {
+            headers: {
+              "x-token": token,
+              "x-refresh-token": refreshtoken,
+            },
+          }
+        )
+        .then((res) => {
+          console.log(res.data);
+          const { completedOrder } = res.data;
+          orderDispatch({
+            type: "GET_COMPLETED_ORDERS",
+            payload: completedOrder,
+          });
+          orderDispatch({ type: "ORDER_DONE", payload: odrState.pickupOrder });
+          navigation.navigate("Tabs", { screen: "CompleteOrder" });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   };
 
