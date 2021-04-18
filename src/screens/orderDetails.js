@@ -4,6 +4,7 @@ import {
   View,
   TouchableOpacity,
   Text,
+  TextInput,
   Dimensions,
   StyleSheet,
 } from "react-native";
@@ -15,7 +16,6 @@ import { orderState } from "./context/orderContext";
 import {
   Divider,
   Button,
-  TextInput,
   ActivityIndicator,
   Dialog,
   Portal,
@@ -650,7 +650,7 @@ const OrderDetails = ({ route }) => {
                     justifyContent: "space-between",
                   }}>
                   <TextInput
-                    label='OTP'
+                    placeholder='OTP'
                     value={buyerOTP}
                     // error={phoneError ? true : false}
                     onChangeText={(text) => {
@@ -660,9 +660,11 @@ const OrderDetails = ({ route }) => {
                     mode='outlined'
                     style={{
                       height: 30,
+                      paddingHorizontal: 10,
+                      marginTop: 10,
                       width: "50%",
                       color: "#212121",
-                      backgroundColor: "#ffffff",
+                      backgroundColor: "#eeeeee",
                     }}
                   />
                   {OTPreq ? (
@@ -1369,7 +1371,7 @@ const OrderDetails = ({ route }) => {
                       justifyContent: "space-between",
                     }}>
                     <TextInput
-                      label='OTP'
+                      placeholder='OTP'
                       value={sellerOTP}
                       // error={phoneError ? true : false}
                       onChangeText={(text) => {
@@ -1378,10 +1380,12 @@ const OrderDetails = ({ route }) => {
                       }}
                       mode='outlined'
                       style={{
+                        marginTop: 10,
+                        paddingHorizontal: 10,
                         height: 30,
                         width: "50%",
                         color: "#212121",
-                        backgroundColor: "#ffffff",
+                        backgroundColor: "#eeeeee",
                       }}
                     />
                     {OTPreq ? (

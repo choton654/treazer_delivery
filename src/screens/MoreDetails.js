@@ -5,7 +5,7 @@ import {
   Text,
   View,
   Dimensions,
-  // ActivityIndicator,
+  TextInput,
   // ScrollView,
 } from "react-native";
 import { userState } from "./context/userContext";
@@ -14,7 +14,6 @@ import { Picker } from "@react-native-picker/picker";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import {
-  TextInput,
   Button,
   Divider,
   HelperText,
@@ -150,16 +149,18 @@ const MoreDetails = () => {
           Please Enter Your Details
         </Text>
         <TextInput
-          label='Email'
+          placeholder='Email'
           value={email}
           onChangeText={(text) => setEmail(text)}
           mode='outlined'
+          keyboardType='email-address'
           style={{
             height: 40,
+            paddingHorizontal: 10,
             marginTop: 10,
             width: "80%",
             color: "#212121",
-            backgroundColor: "#ffffff",
+            backgroundColor: "#eeeeee",
           }}
         />
         <HelperText type='info' visible={emailErrors()}>
@@ -184,7 +185,7 @@ const MoreDetails = () => {
               paddingVertical: 5,
               borderRadius: 3,
               paddingHorizontal: 10,
-              background: "#ffffff",
+              background: "#eeeeee",
               border: "1px solid black",
               color: "#757575",
               fontWeight: "bold",
@@ -213,7 +214,7 @@ const MoreDetails = () => {
               paddingVertical: 5,
               borderRadius: 3,
               paddingHorizontal: 10,
-              background: "#ffffff",
+              background: "#eeeeee",
               border: "1px solid black",
               color: "#757575",
               fontWeight: "bold",
@@ -227,17 +228,20 @@ const MoreDetails = () => {
         )}
         {!restaurentId && (
           <TextInput
-            label='Reference Code'
+            placeholder='Reference Code'
+            placeholderTextColor={disable ? "#212121" : "#ffffff"}
             disabled={disable ? false : true}
             value={referenceCode}
             onChangeText={(text) => setReferenceCode(parseInt(text))}
             mode='outlined'
+            keyboardType='number-pad'
             style={{
               height: 40,
+              paddingHorizontal: 10,
               marginTop: 10,
               width: "80%",
               color: "#212121",
-              backgroundColor: "#ffffff",
+              backgroundColor: `${disable ? "#eeeeee" : "#ffffff"}`,
             }}
           />
         )}

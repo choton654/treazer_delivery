@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Text,
   View,
+  TextInput,
   Dimensions,
   ActivityIndicator,
   ScrollView,
@@ -12,7 +13,6 @@ import { useNavigation } from "@react-navigation/native";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import {
-  TextInput,
   Button,
   Divider,
   HelperText,
@@ -155,18 +155,20 @@ const Login = () => {
             label='Phone'
             value={phoneNo}
             error={phoneError ? true : false}
+            keyboardType='number-pad'
+            placeholder='Phone'
             onChangeText={(text) => {
               setPhoneNo(text);
               setPasswordError("");
               setPhoneError("");
             }}
-            mode='outlined'
             style={{
+              paddingHorizontal: 10,
               height: 40,
               marginTop: 10,
               width: "80%",
               color: "#212121",
-              backgroundColor: "#ffffff",
+              backgroundColor: "#eeeeee",
             }}
           />
           <HelperText
@@ -176,20 +178,21 @@ const Login = () => {
           </HelperText>
           <TextInput
             secureTextEntry={true}
-            label='Password'
             value={password}
             error={passwordError ? true : false}
+            placeholder='Password'
             onChangeText={(text) => {
               setPassword(text);
               setPasswordError("");
               setPhoneError("");
             }}
-            mode='outlined'
             style={{
+              paddingHorizontal: 10,
+              marginTop: 10,
               height: 40,
               width: "80%",
               color: "#212121",
-              backgroundColor: "#ffffff",
+              backgroundColor: "#eeeeee",
             }}
           />
           <HelperText type='error' visible={passwordError ? true : false}>

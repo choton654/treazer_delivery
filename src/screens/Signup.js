@@ -1,8 +1,13 @@
 import React, { useState } from "react";
-import { StyleSheet, ScrollView, View, Dimensions } from "react-native";
+import {
+  StyleSheet,
+  ScrollView,
+  View,
+  Dimensions,
+  TextInput,
+} from "react-native";
 import {
   Button,
-  TextInput,
   HelperText,
   Dialog,
   Portal,
@@ -20,11 +25,11 @@ const Signup = ({ hideDialog, visible }) => {
   const [signupReq, setSignupReq] = useState(true);
   const [phoneError, setPhoneError] = useState("");
 
-  const fullnameErrors = () => {
-    // let fullnameRegEx = /^[A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*$/;
-    let fullnameRegEx = /^(?=[a-zA-Z0-9._]{6,50}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
-    return !fullnameRegEx.test(fullname);
-  };
+  // const fullnameErrors = () => {
+  //   let fullnameRegEx = /^[A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*$/;
+  //   let fullnameRegEx = /^(?=[a-zA-Z0-9._]{2,50}$)(?!.*[_.]{2})[^_.].*[^_.]$/;
+  //   return !fullnameRegEx.test(fullname);
+  // };
   const passwordErrors = () => {
     return password === "";
   };
@@ -36,12 +41,7 @@ const Signup = ({ hideDialog, visible }) => {
     return !phoneMatch.test(phoneNo);
   };
   const signUp = () => {
-    if (
-      !fullnameErrors() &&
-      !passwordErrors() &&
-      !confirmPasswordErrors() &&
-      !phoneErrors()
-    ) {
+    if (!passwordErrors() && !confirmPasswordErrors() && !phoneErrors()) {
       setSignupReq(false);
       axios
         .post(`${BASE_URL}/api/user/signup`, {
@@ -79,7 +79,7 @@ const Signup = ({ hideDialog, visible }) => {
           </Dialog.Title>
           <Dialog.Content style={{ paddingBottom: 10 }}>
             <TextInput
-              label='Full Name'
+              placeholder='Full Name'
               value={fullname}
               onChangeText={(text) => {
                 setPhoneError("");
@@ -88,21 +88,22 @@ const Signup = ({ hideDialog, visible }) => {
               mode='outlined'
               style={{
                 height: 40,
+                paddingHorizontal: 10,
                 marginTop: 10,
                 width: "100%",
                 color: "#212121",
-                backgroundColor: "#ffffff",
+                backgroundColor: "#eeeeee",
               }}
             />
             <HelperText
               type='info'
-              visible={fullnameErrors()}
+              // visible={fullnameErrors()}
               style={{ marginBottom: 10 }}>
               Fullname must contain 6 charecters
             </HelperText>
             <TextInput
               secureTextEntry={true}
-              label='Password'
+              placeholder='Password'
               value={password}
               onChangeText={(text) => {
                 setPassword(text);
@@ -110,10 +111,11 @@ const Signup = ({ hideDialog, visible }) => {
               }}
               mode='outlined'
               style={{
+                paddingHorizontal: 10,
                 height: 40,
                 width: "100%",
                 color: "#212121",
-                backgroundColor: "#ffffff",
+                backgroundColor: "#eeeeee",
               }}
             />
             <HelperText
@@ -124,7 +126,7 @@ const Signup = ({ hideDialog, visible }) => {
             </HelperText>
             <TextInput
               secureTextEntry={true}
-              label='Confirm Password'
+              placeholder='Confirm Password'
               value={confirmPassword}
               onChangeText={(text) => {
                 setConfirmPassword(text);
@@ -132,10 +134,11 @@ const Signup = ({ hideDialog, visible }) => {
               }}
               mode='outlined'
               style={{
+                paddingHorizontal: 10,
                 height: 40,
                 width: "100%",
                 color: "#212121",
-                backgroundColor: "#ffffff",
+                backgroundColor: "#eeeeee",
               }}
             />
             <HelperText
@@ -145,19 +148,21 @@ const Signup = ({ hideDialog, visible }) => {
               Re-type password
             </HelperText>
             <TextInput
-              label='Phone'
+              placeholder='Phone'
               value={phoneNo}
               error={phoneError ? true : false}
               onChangeText={(text) => {
                 setPhoneNo(text);
                 setPhoneError("");
               }}
+              keyboardType='number-pad'
               mode='outlined'
               style={{
+                paddingHorizontal: 10,
                 height: 40,
                 width: "100%",
                 color: "#212121",
-                backgroundColor: "#ffffff",
+                backgroundColor: "#eeeeee",
               }}
             />
             <HelperText
@@ -172,10 +177,8 @@ const Signup = ({ hideDialog, visible }) => {
               <Button
                 onPress={signUp}
                 disabled={
-                  fullnameErrors() &&
-                  passwordErrors() &&
-                  confirmPasswordErrors() &&
-                  phoneErrors()
+                  // fullnameErrors() &&
+                  passwordErrors() && confirmPasswordErrors() && phoneErrors()
                     ? true
                     : false
                 }
@@ -192,7 +195,7 @@ const Signup = ({ hideDialog, visible }) => {
                 }}
                 contentStyle={{
                   backgroundColor: `${
-                    !fullnameErrors() &&
+                    // !fullnameErrors() &&
                     !passwordErrors() &&
                     !confirmPasswordErrors() &&
                     !phoneErrors()

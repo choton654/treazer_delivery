@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
@@ -47,8 +47,13 @@ const AdminDashboard = () => {
       )
       .then((res) => {
         console.log(res.data);
-        const { foundUser } = res.data;
-        dispatch({ type: "GET_DELIVERY_BOY_BY_ADMIN", payload: foundUser });
+        const { foundUser, err } = res.data;
+        console.log(err);
+        if (err) {
+          dispatch({ type: "GET_DELIVERY_BOY_BY_ADMIN", payload: err });
+        } else if (foundUser) {
+          dispatch({ type: "GET_DELIVERY_BOY_BY_ADMIN", payload: foundUser });
+        }
 
         let deliveryBoysIds = [];
         foundUser.forEach((deliveryBoy) => {
@@ -74,13 +79,13 @@ const AdminDashboard = () => {
               payload: completedOrder,
             });
           })
-          .catch((err) => {
-            console.log(err);
+          .catch((err1) => {
+            console.log(err1);
           });
       })
-      .catch((error) => {
-        const { err } = error.response.data;
-        console.log(err);
+      .catch((error1) => {
+        // const { err } = error.response;
+        console.log(error1);
         // setVisible(true);
         // setBoysError(err);
       });
@@ -274,7 +279,9 @@ const AdminDashboard = () => {
                 fontWeight: "700",
                 letterSpacing: 1,
               }}>
-              There is no order completed by your boys
+              {!Array.isArray(state.deliveryBoys) && !state.deliveryBoys
+                ? state.deliveryBoys
+                : "There is no order completed by your boys"}
             </Text>
           </View>
         )}
