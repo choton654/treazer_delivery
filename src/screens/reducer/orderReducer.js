@@ -24,7 +24,7 @@ export const reducer = (state, action) => {
       return {
         ...state,
         orders: null,
-        assignedOrders: null,
+        assignedOrders: [],
         pickupOrder: null,
         completedOrders: [],
         error: null,

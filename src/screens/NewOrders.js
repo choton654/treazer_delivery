@@ -16,6 +16,7 @@ const NewOrders = ({ setVisible1 }) => {
   const refreshtoken = localStorage.getItem("refresh-token");
   const phone = JSON.parse(localStorage.getItem("user"))?.mobile_no;
   const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user && user._id;
   const resturantId =
     user && user.resturantId !== undefined && user.resturantId;
   const deliveryType = user && user.deliveryType;
@@ -73,6 +74,25 @@ const NewOrders = ({ setVisible1 }) => {
         orderDispatch({ type: "ACCEPT_ORDER", payload: acceptedOrder });
         setAcceptOrderReq(true);
         setVisible1(true);
+        axios
+          .post(
+            `${BASE_URL}/api/order/assignedOrder`,
+            { deliveryboyId: userId },
+            {
+              headers: {
+                "x-token": token,
+                "x-refresh-token": refreshtoken,
+              },
+            }
+          )
+          .then((res1) => {
+            const { assignedOrder } = res1.data;
+            console.log(assignedOrder);
+            orderDispatch({ type: "ASSIGNED_ORDER", payload: assignedOrder });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       })
       .catch((err) => {
         console.log(err);
