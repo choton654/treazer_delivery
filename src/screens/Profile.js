@@ -5,7 +5,11 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { userState } from "./context/userContext";
 import { orderState } from "./context/orderContext";
+import * as PusherPushNotifications from "@pusher/push-notifications-web";
 
+const beamsClient = new PusherPushNotifications.Client({
+  instanceId: "4c134700-4141-489d-b536-a6417609ba38",
+});
 const Profile = () => {
   const { state, dispatch } = userState();
   const { dispatch: orderDispatch } = orderState();
@@ -14,6 +18,10 @@ const Profile = () => {
     localStorage.removeItem("refresh-token");
     dispatch({ type: "LOGOUT_USER" });
     orderDispatch({ type: "EMPTY_ORDER" });
+    beamsClient
+      .clearAllState()
+      .then(() => console.log("Beams state has been cleared"))
+      .catch((e) => console.error("Could not clear Beams state", e));
   };
 
   return (
