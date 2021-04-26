@@ -4,6 +4,8 @@
  * Store notification icon string in service worker.
  * Ref: https://stackoverflow.com/a/35729334/2603230
  */
+importScripts("https://js.pusher.com/beams/service-worker.js");
+
 self.addEventListener("message", (event) => {
   let data;
   if (typeof event.data === "string") {
