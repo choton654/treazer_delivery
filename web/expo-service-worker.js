@@ -24,19 +24,21 @@ self.addEventListener("push", (event) => {
   let payload = {};
   try {
     payload = event.data.json();
+    console.log(payload);
   } catch (e) {
     // If `event.data.text()` is not a JSON object, we just treat it
     // as a plain string and display it as the body.
     payload = { title: "", body: event.data.text() };
   }
 
-  const title = payload.title;
-  const data = payload.data || payload.custom || {};
+  const title = payload.notification.title;
+  const data = payload.notification || payload.custom || {};
   const options = {
-    body: payload.body,
+    body: payload.notification.body,
     data,
   };
-  options.icon = data._icon || payload.icon || self.notificationIcon || null;
+  options.icon =
+    data.icon || payload.notification.icon || self.notificationIcon || null;
   options.image =
     data._richContent && data._richContent.image
       ? options.data._richContent.image

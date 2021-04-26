@@ -11,7 +11,7 @@ import { LocationContextProvider } from "./src/screens/context/locationcontext";
 import * as PusherPushNotifications from "@pusher/push-notifications-web";
 
 const beamsClient = new PusherPushNotifications.Client({
-  instanceId: "bbb31fea-4a4a-46e1-a801-fc0a31ca9569",
+  instanceId: "4c134700-4141-489d-b536-a6417609ba38",
 });
 const App = () => {
   beamsClient
