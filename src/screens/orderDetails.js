@@ -584,8 +584,8 @@ const OrderDetails = ({ route }) => {
                   <Text
                     style={{
                       fontSize: 12,
-                      letterSpacing: 2,
-                      fontWeight: "400",
+                      // letterSpacing: 2,
+                      fontWeight: "600",
                       fontFamily: "Open Sans",
                       color: "#212121",
                     }}>
@@ -1305,8 +1305,8 @@ const OrderDetails = ({ route }) => {
                     <Text
                       style={{
                         fontSize: 12,
-                        letterSpacing: 2,
-                        fontWeight: "400",
+                        // letterSpacing: 2,
+                        fontWeight: "600",
                         fontFamily: "Open Sans",
                         color: "#212121",
                       }}>
