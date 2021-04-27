@@ -1,5 +1,6 @@
 import mapboxgl from "mapbox-gl/dist/mapbox-gl-csp";
 import React, { useEffect, useRef, useState } from "react";
+import copy from "copy-to-clipboard";
 import {
   View,
   TouchableOpacity,
@@ -513,7 +514,7 @@ const OrderDetails = ({ route }) => {
           </Text>
         </TouchableOpacity>
         {odrState.pickupOrder ? (
-          <View>
+          <View style={{ width: "100%" }}>
             <View
               style={{
                 width: "100%",
@@ -581,16 +582,39 @@ const OrderDetails = ({ route }) => {
                     }}>
                     :{odrState.pickupOrder.userId.username}
                   </Text>
-                  <Text
+                  <View
                     style={{
-                      fontSize: 12,
-                      // letterSpacing: 2,
-                      fontWeight: "600",
-                      fontFamily: "Open Sans",
-                      color: "#212121",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
                     }}>
-                    :{odrState.pickupOrder.userId.mobile_no}
-                  </Text>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        // letterSpacing: 2,
+                        fontWeight: "600",
+                        fontFamily: "Open Sans",
+                        color: "#212121",
+                      }}>
+                      :{odrState.pickupOrder.userId.mobile_no}
+                    </Text>
+                    <div
+                      onClick={() =>
+                        copy(odrState.pickupOrder.userId.mobile_no)
+                      }
+                      style={{
+                        marginLeft: 5,
+                        width: 60,
+                        backgroundColor: "#eeeeee",
+                        boxShadow: "0px 2px 5px 2px #eeeeee",
+                        fontFamily: "Open Sans",
+                        fontWeight: "600",
+                        fontSize: 10,
+                        marginBottom: 5,
+                        textAlign: "center",
+                      }}>
+                      Copy no
+                    </div>
+                  </View>
                   <Text
                     style={{
                       fontSize: 12,
@@ -672,9 +696,6 @@ const OrderDetails = ({ route }) => {
                       mode='contained'
                       onPress={OTPmatch}
                       compact={true}
-                      // disabled={
-                      //   !phoneErrors() && !phoneError && !passwordError ? false : true
-                      // }
                       style={{
                         marginVertical: 5,
                         width: 80,
@@ -1302,16 +1323,39 @@ const OrderDetails = ({ route }) => {
                       }}>
                       :{odrState.pickupOrder.resturantId.resturant_name}
                     </Text>
-                    <Text
+                    <View
                       style={{
-                        fontSize: 12,
-                        // letterSpacing: 2,
-                        fontWeight: "600",
-                        fontFamily: "Open Sans",
-                        color: "#212121",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
                       }}>
-                      :{odrState.pickupOrder.resturantId.phone}
-                    </Text>
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          // letterSpacing: 2,
+                          fontWeight: "600",
+                          fontFamily: "Open Sans",
+                          color: "#212121",
+                        }}>
+                        :{odrState.pickupOrder.resturantId.phone}
+                      </Text>
+                      <div
+                        onClick={() =>
+                          copy(odrState.pickupOrder.resturantId.phone)
+                        }
+                        style={{
+                          marginLeft: 5,
+                          width: 60,
+                          backgroundColor: "#eeeeee",
+                          boxShadow: "0px 2px 5px 2px #eeeeee",
+                          fontFamily: "Open Sans",
+                          fontWeight: "600",
+                          fontSize: 10,
+                          marginBottom: 5,
+                          textAlign: "center",
+                        }}>
+                        Copy no.
+                      </div>
+                    </View>
                     <Text
                       style={{
                         fontSize: 12,
@@ -1393,9 +1437,7 @@ const OrderDetails = ({ route }) => {
                         mode='contained'
                         onPress={OTPmatch}
                         compact={true}
-                        // disabled={
-                        //   !phoneErrors() && !phoneError && !passwordError ? false : true
-                        // }
+                        disabled={sellerOTP === "" ? true : false}
                         style={{
                           marginVertical: 5,
                           width: 80,
