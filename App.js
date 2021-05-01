@@ -10,10 +10,11 @@ import { OrderContextProvider } from "./src/screens/context/orderContext";
 import { LocationContextProvider } from "./src/screens/context/locationcontext";
 import * as PusherPushNotifications from "@pusher/push-notifications-web";
 
-const beamsClient = new PusherPushNotifications.Client({
-  instanceId: "36674458-c456-44a3-823b-616088fa88e1",
-});
-const App = () => {
+window.navigator.serviceWorker.ready.then((serviceWorkerRegistration) => {
+  console.log(serviceWorkerRegistration);
+  const beamsClient = new PusherPushNotifications.Client({
+    instanceId: "36674458-c456-44a3-823b-616088fa88e1",
+  });
   beamsClient
     .start()
     .then((beamsClient2) => beamsClient2.getDeviceId())
@@ -26,6 +27,8 @@ const App = () => {
     .catch((err) => {
       console.log(err);
     });
+});
+const App = () => {
   return (
     <PaperProvider>
       <OrderContextProvider>
