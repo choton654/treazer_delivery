@@ -1,5 +1,6 @@
 import React, { Suspense } from "react";
 import { ActivityIndicator, View } from "react-native";
+import { useClearCache } from "react-clear-cache";
 import { lazy } from "@loadable/component";
 const RootNavigation = lazy(() =>
   import("./src/screens/navigation/RootNavigation")
@@ -28,37 +29,58 @@ window.navigator.serviceWorker.ready.then((serviceWorkerRegistration) => {
       console.log(err);
     });
 });
+const Main = ()=>{
+    return (
+        <PaperProvider>
+            <OrderContextProvider>
+                <UserContextProvider>
+                    <LocationContextProvider>
+                        <Suspense
+                            fallback={
+                                <View
+                                    style={{
+                                        flex: 1,
+                                        backgroundColor: "#ffffff",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}>
+                                    <ActivityIndicator
+                                        size='large'
+                                        color='#82b1ff'
+                                        style={{
+                                            margin: "auto",
+                                        }}
+                                    />
+                                </View>
+                            }>
+                            <RootNavigation />
+                        </Suspense>
+                    </LocationContextProvider>
+                </UserContextProvider>
+            </OrderContextProvider>
+        </PaperProvider>
+    );
+}
 const App = () => {
-  return (
-    <PaperProvider>
-      <OrderContextProvider>
-        <UserContextProvider>
-          <LocationContextProvider>
-            <Suspense
-              fallback={
-                <View
-                  style={{
-                    flex: 1,
-                    backgroundColor: "#ffffff",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}>
-                  <ActivityIndicator
-                    size='large'
-                    color='#82b1ff'
-                    style={{
-                      margin: "auto",
-                    }}
-                  />
-                </View>
-              }>
-              <RootNavigation />
-            </Suspense>
-          </LocationContextProvider>
-        </UserContextProvider>
-      </OrderContextProvider>
-    </PaperProvider>
-  );
+    const { isLatestVersion, emptyCacheStorage } = useClearCache();
+    return (
+        <View style={{ flex: 1, backgroundColor: "#ffffff" }}>
+            {!isLatestVersion ? (
+                <p>
+                    <a
+                        href='#'
+                        onClick={(e) => {
+                            e.preventDefault();
+                            emptyCacheStorage();
+                        }}>
+                        Update version
+                    </a>
+                </p>
+            ) : (
+                <Main />
+            )}
+        </View>
+    );
 };
 
 export default App;

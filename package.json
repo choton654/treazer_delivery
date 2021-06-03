@@ -1,6 +1,8 @@
 {
   "main": "index.js",
   "scripts": {
+    "prebuild": "npm run generate-build-meta",
+    "generate-build-meta": "./node_modules/react-clear-cache/bin/cli.js",
     "predeploy": "expo build:web",
     "deploy-hosting": "npm run predeploy && firebase deploy --only hosting",
     "android": "react-native run-android",
@@ -29,6 +31,7 @@
     "expo-updates": "~0.4.0",
     "mapbox-gl": "^2.1.1",
     "react": "16.13.1",
+    "react-clear-cache": "^1.4.12",
     "react-dom": "16.13.1",
     "react-lazy-load-image-component": "^1.5.1",
     "react-native": "~0.63.4",
