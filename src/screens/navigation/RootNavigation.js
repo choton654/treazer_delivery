@@ -46,8 +46,8 @@ const RootNavigation = () => {
         )
         .then((res) => {
           const { features } = res.data;
-          console.log(features[0].place_name.split(",")[0]);
-          console.log(features[0].place_name.split(",")[1]);
+          // console.log(features[0].place_name.split(",")[0]);
+          // console.log(features[0].place_name.split(",")[1]);
           locationDispatch({
             type: "SET_LOCATION_ADDRESS",
             payload: {

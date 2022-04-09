@@ -18,7 +18,7 @@ const Loading = () => {
   }, []);
   const getSingleUser = () => {
     axios
-      .get(`${BASE_URL}/api/user/${userId}/profile`, {
+      .get(`${BASE_URL}/api/user/profile`, {
         headers: {
           "x-token": token,
           "x-refresh-token": refreshtoken,

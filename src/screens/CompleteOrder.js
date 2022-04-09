@@ -38,7 +38,7 @@ const CompleteOrder = () => {
         }
       )
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         const { completedOrder } = res.data;
         orderDispatch({
           type: "GET_COMPLETED_ORDERS",

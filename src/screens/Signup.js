@@ -43,12 +43,14 @@ const Signup = ({ hideDialog, visible }) => {
   const signUp = () => {
     if (!passwordErrors() && !confirmPasswordErrors() && !phoneErrors()) {
       setSignupReq(false);
+      const registerUser = {
+        username: fullname,
+        accountName: `${fullname.split(" ")[0]}${Date.now()}`,
+        password,
+        phone: phoneNo,
+      }
       axios
-        .post(`${BASE_URL}/api/user/signup`, {
-          username: fullname,
-          password,
-          phone: phoneNo,
-        })
+        .post(`${BASE_URL}/api/user/signup`, { registerUser })
         .then((res) => {
           console.log(res.data);
           setSignupReq(true);
@@ -197,11 +199,11 @@ const Signup = ({ hideDialog, visible }) => {
                   backgroundColor: `${
                     // !fullnameErrors() &&
                     !passwordErrors() &&
-                    !confirmPasswordErrors() &&
-                    !phoneErrors()
+                      !confirmPasswordErrors() &&
+                      !phoneErrors()
                       ? "#4fc3f7"
                       : "#bdbdbd"
-                  }`,
+                    }`,
                 }}>
                 Sign up
               </Button>

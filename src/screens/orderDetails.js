@@ -69,7 +69,7 @@ const OrderDetails = ({ route }) => {
     odrState.pickupOrder.resturantId.location &&
     odrState.pickupOrder.resturantId.location.coordinates &&
     odrState.pickupOrder.resturantId.location.coordinates[1];
-  console.log(restaurantAddressLongitude, restaurantAddressLattitude);
+  // console.log(restaurantAddressLongitude, restaurantAddressLattitude);
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: mapContainer.current,
@@ -177,7 +177,8 @@ const OrderDetails = ({ route }) => {
       });
     }
 
-    if (getRestaurantAddress) {
+    if (getRestaurantAddress && restaurantAddressLongitude && restaurantAddressLattitude) {
+      console.log(restaurantAddressLongitude, restaurantAddressLattitude, locationState.longitude, locationState.latitude);
       map.on("load", () => {
         axios
           .get(

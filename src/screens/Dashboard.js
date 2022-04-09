@@ -155,13 +155,19 @@ const Dashboard = () => {
               <Snackbar
                 visible={visible1}
                 onDismiss={onDismissSnackBar1}
+                style={{
+                  backgroundColor: "#fff", borderWidth: 2,
+                  borderColor: "#00E0FF"
+                }}
                 action={{
                   label: "Close",
                   onPress: () => {
                     onDismissSnackBar1();
                   },
                 }}>
-                You have accepted an order
+                <Text style={{ color: "#00E0FF", fontWeight: "700", letterSpacing: 1 }}>
+                  You have accepted an order
+                </Text>
               </Snackbar>
             </View>
           </TabPanel>
@@ -196,13 +202,19 @@ const Dashboard = () => {
               <Snackbar
                 visible={visible}
                 onDismiss={onDismissSnackBar}
+                style={{
+                  backgroundColor: "#fff", borderWidth: 2,
+                  borderColor: "#00E0FF"
+                }}
                 action={{
                   label: "Close",
                   onPress: () => {
                     onDismissSnackBar();
                   },
                 }}>
-                You have rejected an order
+                <Text style={{ color: "#00E0FF", fontWeight: "700", letterSpacing: 1 }}>
+                  You have rejected an order
+                </Text>
               </Snackbar>
             </View>
           </TabPanel>

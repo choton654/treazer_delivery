@@ -46,9 +46,8 @@ const AdminDashboard = () => {
         }
       )
       .then((res) => {
-        console.log(res.data);
         const { foundUser, err } = res.data;
-        console.log(err);
+        console.log(foundUser);
         if (err) {
           dispatch({ type: "GET_DELIVERY_BOY_BY_ADMIN", payload: err });
         } else if (foundUser) {
@@ -73,7 +72,7 @@ const AdminDashboard = () => {
           )
           .then((res1) => {
             const { completedOrder } = res1.data;
-            console.log(completedOrder);
+            // console.log(completedOrder);
             orderDispatch({
               type: "MY_BOYS_COMPLETED_ORDERS",
               payload: completedOrder,
@@ -132,6 +131,20 @@ const AdminDashboard = () => {
           </Text>
         </View>
       </View>
+      {state.deliveryBoys &&
+        <View style={{
+          justifyContent: "center", marginVertical: 10,
+          borderWidth: 1, borderColor: "#00E0FF", alignItems: "center",
+          backgroundColor: "#fff", marginHorizontal: "auto",
+          paddingHorizontal: 5, paddingVertical: 5, borderRadius: 5
+        }}>
+          <Text style={{
+            textAlign: "center", fontWeight: "700",
+            fontSize: 15, color: "#00E0FF"
+          }}>Number of boys: {state.deliveryBoys.length}
+          </Text>
+        </View>
+      }
       <ScrollView
         contentContainerStyle={{
           width: "100%",

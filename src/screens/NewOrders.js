@@ -42,7 +42,7 @@ const NewOrders = ({ setVisible1 }) => {
         }
       )
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         const { order, msg } = res.data;
         if (msg !== undefined) {
           orderDispatch({ type: "ORDER_ERROR", payload: msg });
@@ -70,7 +70,7 @@ const NewOrders = ({ setVisible1 }) => {
       )
       .then((res) => {
         const { acceptedOrder } = res.data;
-        console.log(acceptedOrder);
+        // console.log(acceptedOrder);
         orderDispatch({ type: "ACCEPT_ORDER", payload: acceptedOrder });
         setAcceptOrderReq(true);
         setVisible1(true);
@@ -87,7 +87,7 @@ const NewOrders = ({ setVisible1 }) => {
           )
           .then((res1) => {
             const { assignedOrder } = res1.data;
-            console.log(assignedOrder);
+            // console.log(assignedOrder);
             orderDispatch({ type: "ASSIGNED_ORDER", payload: assignedOrder });
           })
           .catch((err) => {
