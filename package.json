@@ -4,7 +4,7 @@
     "prebuild": "npm run generate-build-meta",
     "generate-build-meta": "./node_modules/react-clear-cache/bin/cli.js",
     "predeploy": "expo build:web",
-    "deploy-hosting": "npm run predeploy && firebase deploy --only hosting",
+    "deploy-hosting": "npm run prebuild && npm run predeploy && firebase deploy --only hosting",
     "android": "react-native run-android",
     "build": "expo build:web",
     "ios": "react-native run-ios",

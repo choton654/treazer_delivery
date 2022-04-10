@@ -161,7 +161,7 @@ const NewOrders = ({ setVisible1 }) => {
                       color: "#424242",
                       letterSpacing: 1,
                     }}>
-                    {order.createdAt}
+                    {new Date(order.createdAt).toDateString()}
                   </Text>
                 </Text>
                 <View
@@ -203,7 +203,7 @@ const NewOrders = ({ setVisible1 }) => {
                         color: "#424242",
                         letterSpacing: 1,
                       }}>
-                      Rs.{order.totalPrice}
+                      Rs.{order.totalPrice + order.resturantId.deliveryPrice}
                     </Text>
                   </View>
                   <View

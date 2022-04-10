@@ -8,6 +8,7 @@ import { ActivityIndicator } from "react-native-paper";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { orderState } from "./context/orderContext";
+import Header from "../components/OrderDetails/Header";
 const CompleteOrder = () => {
   const { state: odrState, dispatch: orderDispatch } = orderState();
 
@@ -53,45 +54,7 @@ const CompleteOrder = () => {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#ffffff" }}>
-      <View
-        style={{
-          // position: "absolute",
-          width: "100%",
-          height: 60,
-          backgroundColor: "#00E0FF",
-        }}>
-        <View
-          style={{
-            height: 50,
-            width: "100%",
-            flexDirection: "row",
-            alignItems: "center",
-          }}>
-          <LazyLoadImage
-            style={{
-              width: 35,
-              height: 35,
-              marginLeft: 10,
-              marginTop: 10,
-              resizeMode: "cover",
-              borderRadius: 30,
-              boxShadow: "0px 2px 10px 1px #757575",
-            }}
-            src={require("../assets/logo/delivery_treazer_logo.png")}
-            effect='blur'
-          />
-          <Text
-            style={{
-              marginHorizontal: "auto",
-              color: "#ffffff",
-              fontWeight: "700",
-              fontSize: 20,
-              letterSpacing: 1,
-            }}>
-            Completed Orders
-          </Text>
-        </View>
-      </View>
+      <Header title={"Completed Orders"} />
       <ScrollView
         contentContainerStyle={{
           width: "100%",
@@ -148,7 +111,7 @@ const CompleteOrder = () => {
                       color: "#424242",
                       letterSpacing: 1,
                     }}>
-                    {order.paidAt}
+                    {new Date(order.paidAt).toDateString()}
                   </Text>
                 </Text>
                 <View
@@ -188,7 +151,7 @@ const CompleteOrder = () => {
                         color: "#424242",
                         letterSpacing: 1,
                       }}>
-                      Rs.{order.totalPrice}
+                      Rs.{order.totalPrice + order.resturantId.deliveryPrice}
                     </Text>
                   </View>
                   <View

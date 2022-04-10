@@ -6,6 +6,7 @@ import "react-lazy-load-image-component/src/effects/blur.css";
 import { userState } from "./context/userContext";
 import { orderState } from "./context/orderContext";
 import * as PusherPushNotifications from "@pusher/push-notifications-web";
+import Header from "../components/OrderDetails/Header";
 
 const beamsClient = new PusherPushNotifications.Client({
   instanceId: "36674458-c456-44a3-823b-616088fa88e1",
@@ -26,46 +27,7 @@ const Profile = () => {
 
   return (
     <View style={styles.v1}>
-      <View
-        style={{
-          // position: "absolute",
-          width: "100%",
-          height: 60,
-          backgroundColor: "#00E0FF",
-        }}>
-        <View
-          style={{
-            height: 50,
-            width: "100%",
-            flexDirection: "row",
-            alignItems: "center",
-          }}>
-          <LazyLoadImage
-            style={{
-              width: 35,
-              height: 35,
-              marginLeft: 10,
-              marginTop: 10,
-              resizeMode: "cover",
-              borderRadius: 30,
-              boxShadow: "0px 2px 10px 1px #757575",
-            }}
-            src={require("../assets/logo/delivery_treazer_logo.png")}
-            effect='blur'
-          />
-          <Text
-            style={{
-              marginHorizontal: "auto",
-              color: "#ffffff",
-              fontWeight: "700",
-              fontSize: 20,
-              letterSpacing: 1,
-            }}>
-            My Profile
-          </Text>
-        </View>
-      </View>
-
+      <Header title={"My Profile"} />
       <View
         style={{
           flex: 1,

@@ -13,6 +13,7 @@ const NewOrders = lazy(() => import("./NewOrders"));
 const AssignedOrders = lazy(() => import("./AssignedOrders"));
 import { orderState } from "./context/orderContext";
 import { userState } from "./context/userContext";
+import Header from "../components/OrderDetails/Header";
 
 const Dashboard = () => {
   const { state: odrState, dispatch: orderDispatch } = orderState();
@@ -30,45 +31,7 @@ const Dashboard = () => {
   const onDismissSnackBar1 = () => setVisible1(false);
   return (
     <View style={styles.v1}>
-      <View
-        style={{
-          position: "absolute",
-          width: "100%",
-          height: 60,
-          backgroundColor: "#00E0FF",
-        }}>
-        <View
-          style={{
-            width: "100%",
-            flexDirection: "row",
-            alignItems: "center",
-          }}>
-          <LazyLoadImage
-            style={{
-              width: 35,
-              height: 35,
-              marginLeft: 10,
-              marginTop: 10,
-              resizeMode: "cover",
-              borderRadius: 30,
-              boxShadow: "0px 2px 10px 1px #757575",
-            }}
-            src={require("../assets/logo/delivery_treazer_logo.png")}
-            effect='blur'
-          />
-          <Text
-            style={{
-              marginHorizontal: "auto",
-              color: "#ffffff",
-              fontWeight: "700",
-              fontSize: 20,
-              letterSpacing: 1,
-              marginVertical: "auto",
-            }}>
-            Dashboard
-          </Text>
-        </View>
-      </View>
+      <Header title={"Dashboard"} />
       {odrState && odrState.error ? (
         <View
           style={{
@@ -110,7 +73,7 @@ const Dashboard = () => {
           </Button>
         </View>
       ) : (
-        <Tabs selectedTabClassName='selectedTab' className='tabs'>
+        <Tabs selectedTabClassName='selectedTab'>
           <TabList className='tabList'>
             <Tab>
               <Text

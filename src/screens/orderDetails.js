@@ -1,6 +1,5 @@
 import mapboxgl from "mapbox-gl/dist/mapbox-gl-csp";
 import React, { useEffect, useRef, useState } from "react";
-import copy from "copy-to-clipboard";
 import {
   View,
   TouchableOpacity,
@@ -15,7 +14,6 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { geoLocationState } from "./context/locationcontext";
 import { orderState } from "./context/orderContext";
 import {
-  Divider,
   Button,
   ActivityIndicator,
   Dialog,
@@ -32,6 +30,11 @@ import axios from "axios";
 import BASE_URL from "../api";
 import { useNavigation } from "@react-navigation/native";
 import { ScrollView } from "react-native-gesture-handler";
+import SellerInfo from "../components/OrderDetails/SellerInfo";
+import BuyerInfo from "../components/OrderDetails/BuyerInfo";
+import Header from "../components/OrderDetails/Header";
+import OrderInfo from "../components/OrderDetails/OrderInfo";
+
 mapboxgl.workerClass = MapboxWorker;
 mapboxgl.accessToken =
   "pk.eyJ1IjoidHJlYXplciIsImEiOiJja2xxYXJsZmgwMmJwMnBtaXR0M25leTY5In0.Iaj3HteMWU5ZQWCniy4KRA";
@@ -178,7 +181,7 @@ const OrderDetails = ({ route }) => {
     }
 
     if (getRestaurantAddress && restaurantAddressLongitude && restaurantAddressLattitude) {
-      console.log(restaurantAddressLongitude, restaurantAddressLattitude, locationState.longitude, locationState.latitude);
+      // console.log(restaurantAddressLongitude, restaurantAddressLattitude, locationState.longitude, locationState.latitude);
       map.on("load", () => {
         axios
           .get(
@@ -464,439 +467,164 @@ const OrderDetails = ({ route }) => {
   };
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: "#ffffff" }}>
-      <View
-        style={{
-          height: height * 1.8,
-          width: "90%",
-          marginHorizontal: "auto",
-          alignItems: "center",
-          backgroundColor: "#ffffff",
-          borderBottomLeftRadius: 20,
-          borderBottomRightRadius: 20,
-          borderTopLeftRadius: 20,
-          borderTopRightRadius: 20,
-          top: height * 0.7,
-        }}>
+    <View style={{ flex: 1 }}>
+      <Header title={"Order Details"} />
+      <ScrollView style={{ flex: 1, backgroundColor: "#ffffff" }}>
         <View
           style={{
-            width: "100%",
-            height: 400,
-          }}>
-          <div className='map-container-2' ref={mapContainer} />
-        </View>
-        <TouchableOpacity
-          onPress={() => {
-            // navigation.goBack();
-            setGetAddress(!getAddress);
-            setGetRestaurantAddress(!getRestaurantAddress);
-          }}
-          style={{
-            width: "80%",
-            height: 40,
-            padding: "auto",
-            justifyContent: "center",
-            alignItems: "center",
+            height: height * 1.8,
+            width: "90%",
             marginHorizontal: "auto",
-            marginVertical: 10,
-            borderRadius: 20,
-            boxShadow: "3px 4px 6px #C9CCD1, -3px -4px 6px #ffffff",
-            backgroundColor: "#4fc3f7",
+            alignItems: "center",
+            backgroundColor: "#ffffff",
+            borderBottomLeftRadius: 20,
+            borderBottomRightRadius: 20,
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            top: height * 0.7,
           }}>
-          <Text
+          <View
             style={{
-              textAlign: "center",
-              fontWeight: "bold",
-              fontFamily: "Roboto Slab",
-              fontSize: 20,
-              color: "#ffffff",
+              width: "100%",
+              height: 400,
             }}>
-            Switch Route
-          </Text>
-        </TouchableOpacity>
-        {odrState.pickupOrder ? (
-          <View style={{ width: "100%" }}>
-            <View
+            <div className='map-container-2' ref={mapContainer} />
+          </View>
+          <TouchableOpacity
+            onPress={() => {
+              // navigation.goBack();
+              setGetAddress(!getAddress);
+              setGetRestaurantAddress(!getRestaurantAddress);
+            }}
+            style={{
+              width: "80%",
+              height: 40,
+              padding: "auto",
+              justifyContent: "center",
+              alignItems: "center",
+              marginHorizontal: "auto",
+              marginVertical: 10,
+              borderRadius: 20,
+              boxShadow: "3px 4px 6px #C9CCD1, -3px -4px 6px #ffffff",
+              backgroundColor: "#4fc3f7",
+            }}>
+            <Text
               style={{
-                width: "100%",
-                backgroundColor: "#ffffff",
-                marginHorizontal: "auto",
-                marginVertical: 5,
-                paddingRight: 10,
+                textAlign: "center",
+                fontWeight: "bold",
+                fontFamily: "Roboto Slab",
+                fontSize: 20,
+                color: "#ffffff",
               }}>
+              Switch Route
+            </Text>
+          </TouchableOpacity>
+          {odrState.pickupOrder ? (
+            <View style={{ width: "100%", marginBottom: 10 }}>
+              <BuyerInfo odrState={odrState} />
+              {odrState.pickupOrder.isBuyerOTPmatched ? (
+                <View
+                  style={{
+                    width: "100%",
+                    height: 60,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}>
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      fontSize: 15,
+                      fontWeight: "900",
+                      color: "#00c853",
+                      letterSpacing: 2,
+                    }}>
+                    Buyer OTP matched
+                  </Text>
+                </View>
+              ) : (
+                <View style={{ width: "100%" }}>
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      fontWeight: "700",
+                      color: "#37474f",
+                      letterSpacing: 2,
+                    }}>
+                    Buyer OTP:
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      width: "100%",
+                      justifyContent: "space-between",
+                    }}>
+                    <TextInput
+                      placeholder='OTP'
+                      value={buyerOTP}
+                      // error={phoneError ? true : false}
+                      onChangeText={(text) => {
+                        setBuyerOTP(text);
+                        setSellerOTP("");
+                      }}
+                      mode='outlined'
+                      style={{
+                        height: 30,
+                        paddingHorizontal: 10,
+                        marginTop: 10,
+                        width: "50%",
+                        color: "#212121",
+                        backgroundColor: "#eeeeee",
+                      }}
+                    />
+                    {OTPreq ? (
+                      <Button
+                        mode='contained'
+                        onPress={OTPmatch}
+                        compact={true}
+                        style={{
+                          marginVertical: 5,
+                          width: 80,
+                          height: 30,
+                          backgroundColor: "#81d4fa",
+                          boxShadow: "0px 2px 5px 2px #bdbdbd",
+                        }}
+                        labelStyle={{
+                          color: "#ffffff",
+                          fontWeight: "700",
+                          fontSize: 12,
+                          letterSpacing: 1,
+                        }}>
+                        Match
+                      </Button>
+                    ) : (
+                      <ActivityIndicator
+                        animating={true}
+                        color='#82b1ff'
+                        size='small'
+                        style={{ marginRight: 20 }}
+                      />
+                    )}
+                  </View>
+                </View>
+              )}
+            </View>
+          ) : (
+            <View style={{ width: "100%", marginVertical: "auto", padding: 20 }}>
               <Text
                 style={{
-                  fontSize: 15,
+                  textAlign: "Center",
+                  fontSize: 20,
                   letterSpacing: 2,
                   fontWeight: "700",
                   fontFamily: "Open Sans",
-                  color: "#37474f",
-                  marginVertical: 5,
+                  color: "#bdbdbd",
                 }}>
-                Buyer Info
+                You have to view an order to show in map
               </Text>
-              <View style={{ flexDirection: "row" }}>
-                <View>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      letterSpacing: 2,
-                      fontWeight: "400",
-                      fontFamily: "Open Sans",
-                      color: "#212121",
-                    }}>
-                    Buyer Name
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      letterSpacing: 2,
-                      fontWeight: "400",
-                      fontFamily: "Open Sans",
-                      color: "#212121",
-                    }}>
-                    Phone No
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      letterSpacing: 2,
-                      fontWeight: "400",
-                      fontFamily: "Open Sans",
-                      color: "#212121",
-                    }}>
-                    Address
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    marginLeft: 5,
-                    width: "70%",
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      letterSpacing: 2,
-                      fontWeight: "400",
-                      fontFamily: "Open Sans",
-                      color: "#212121",
-                    }}>
-                    :{odrState.pickupOrder.userId.username}
-                  </Text>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                    }}>
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        // letterSpacing: 2,
-                        fontWeight: "600",
-                        fontFamily: "Open Sans",
-                        color: "#212121",
-                      }}>
-                      :{odrState.pickupOrder.userId.mobile_no}
-                    </Text>
-                    <div
-                      onClick={() =>
-                        copy(odrState.pickupOrder.userId.mobile_no)
-                      }
-                      style={{
-                        marginLeft: 5,
-                        width: 60,
-                        backgroundColor: "#eeeeee",
-                        boxShadow: "0px 2px 5px 2px #eeeeee",
-                        fontFamily: "Open Sans",
-                        fontWeight: "600",
-                        fontSize: 10,
-                        marginBottom: 5,
-                        textAlign: "center",
-                      }}>
-                      Copy no
-                    </div>
-                  </View>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      letterSpacing: 2,
-                      fontWeight: "400",
-                      fontFamily: "Open Sans",
-                      color: "#212121",
-                    }}>
-                    :{odrState.pickupOrder.resturantId.address}
-                  </Text>
-                </View>
-              </View>
             </View>
-            <Divider
-              style={{
-                height: 1,
-                width: "100%",
-                backgroundColor: "#bdbdbd",
-                marginHorizontal: "auto",
-                marginVertical: 5,
-              }}
-            />
-            {odrState.pickupOrder.isBuyerOTPmatched ? (
-              <View
-                style={{
-                  width: "100%",
-                  height: 60,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}>
-                <Text
-                  style={{
-                    textAlign: "center",
-                    fontSize: 15,
-                    fontWeight: "900",
-                    color: "#00c853",
-                    letterSpacing: 2,
-                  }}>
-                  Buyer OTP matched
-                </Text>
-              </View>
-            ) : (
-              <View style={{ width: "100%" }}>
-                <Text
-                  style={{
-                    fontSize: 15,
-                    fontWeight: "700",
-                    color: "#37474f",
-                    letterSpacing: 2,
-                  }}>
-                  Buyer OTP:
-                </Text>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    width: "100%",
-                    justifyContent: "space-between",
-                  }}>
-                  <TextInput
-                    placeholder='OTP'
-                    value={buyerOTP}
-                    // error={phoneError ? true : false}
-                    onChangeText={(text) => {
-                      setBuyerOTP(text);
-                      setSellerOTP("");
-                    }}
-                    mode='outlined'
-                    style={{
-                      height: 30,
-                      paddingHorizontal: 10,
-                      marginTop: 10,
-                      width: "50%",
-                      color: "#212121",
-                      backgroundColor: "#eeeeee",
-                    }}
-                  />
-                  {OTPreq ? (
-                    <Button
-                      mode='contained'
-                      onPress={OTPmatch}
-                      compact={true}
-                      style={{
-                        marginVertical: 5,
-                        width: 80,
-                        height: 30,
-                        backgroundColor: "#81d4fa",
-                        boxShadow: "0px 2px 5px 2px #bdbdbd",
-                      }}
-                      labelStyle={{
-                        color: "#ffffff",
-                        fontWeight: "700",
-                        fontSize: 12,
-                        letterSpacing: 1,
-                      }}>
-                      Match
-                    </Button>
-                  ) : (
-                    <ActivityIndicator
-                      animating={true}
-                      color='#82b1ff'
-                      size='small'
-                      style={{ marginRight: 20 }}
-                    />
-                  )}
-                </View>
-              </View>
-            )}
-          </View>
-        ) : (
-          <View style={{ width: "100%", marginVertical: "auto", padding: 20 }}>
-            <Text
-              style={{
-                textAlign: "Center",
-                fontSize: 20,
-                letterSpacing: 2,
-                fontWeight: "700",
-                fontFamily: "Open Sans",
-                color: "#bdbdbd",
-              }}>
-              You have to view an order to show in map
-            </Text>
-          </View>
-        )}
-
-        <Divider
-          style={{
-            height: 1,
-            width: "100%",
-            backgroundColor: "#bdbdbd",
-            marginHorizontal: "auto",
-            marginVertical: 10,
-          }}
-        />
-        {odrState.pickupOrder && (
-          <View style={{ width: "100%", marginBottom: 20 }}>
-            <Text
-              style={{
-                fontSize: 15,
-                letterSpacing: 2,
-                fontWeight: "700",
-                fontFamily: "Open Sans",
-                color: "#bdbdbd",
-                textAlign: "center",
-                marginTop: 5,
-                marginBottom: 10,
-              }}>
-              Packeg Photo
-            </Text>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                width: "100%",
-              }}>
-              {image1 ? (
-                <View
-                  style={{ width: 150, height: 200, marginHorizontal: "auto" }}>
-                  <LazyLoadImage
-                    src={image1}
-                    resizemode='cover'
-                    effect='blur'
-                    style={{
-                      width: 150,
-                      marginLeft: "auto",
-                      height: 200,
-                      borderRadius: 20,
-                      boxShadow: "1px 3px 6px 1px #C9CCD1",
-                      resizeMode: "contain",
-                    }}
-                  />
-                  <View
-                    style={{
-                      position: "absolute",
-                      flexDirection: "row",
-                      right: 0,
-                      background: "none",
-                      width: 30,
-                      marginRight: 20,
-                      marginTop: 15,
-                      height: 30,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      borderRadius: 20,
-                    }}>
-                    <TouchableOpacity onPress={() => setImage1(null)}>
-                      <Ionicons
-                        name='close-circle-outline'
-                        size={26}
-                        color='#82b1ff'
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              ) : sendImgReq1 ? (
-                <TouchableOpacity style={styles.div_2} onPress={pickImage1}>
-                  <Ionicons name='add' size={26} color='#82b1ff' />
-                  <Text style={styles.text_1}>Add Top View</Text>
-                </TouchableOpacity>
-              ) : (
-                <View style={styles.div_2}>
-                  <ActivityIndicator
-                    animating={true}
-                    color='#82b1ff'
-                    size='large'
-                  />
-                </View>
-              )}
-              {image2 ? (
-                <View
-                  style={{ width: 150, height: 200, marginHorizontal: "auto" }}>
-                  <LazyLoadImage
-                    src={image2}
-                    resizemode='cover'
-                    effect='blur'
-                    style={{
-                      width: 150,
-                      marginLeft: "auto",
-                      height: 200,
-                      borderRadius: 20,
-                      boxShadow: "1px 3px 6px 1px #C9CCD1",
-                      resizeMode: "contain",
-                    }}
-                  />
-                  <View
-                    style={{
-                      position: "absolute",
-                      flexDirection: "row",
-                      right: 0,
-                      background: "none",
-                      width: 30,
-                      marginRight: 20,
-                      marginTop: 15,
-                      height: 30,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      borderRadius: 20,
-                    }}>
-                    <TouchableOpacity onPress={() => setImage2(null)}>
-                      <Ionicons
-                        name='close-circle-outline'
-                        size={26}
-                        color='#82b1ff'
-                      />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              ) : sendImgReq2 ? (
-                <TouchableOpacity style={styles.div_2} onPress={pickImage2}>
-                  <Ionicons name='add' size={26} color='#82b1ff' />
-                  <Text style={styles.text_1}>Add Side View</Text>
-                </TouchableOpacity>
-              ) : (
-                <View style={styles.div_2}>
-                  <ActivityIndicator
-                    animating={true}
-                    color='#82b1ff'
-                    size='large'
-                  />
-                </View>
-              )}
-            </View>
-            <Button
-              mode='contained'
-              onPress={uploadPackagePic}
-              style={{
-                marginTop: 20,
-                width: "80%",
-                height: 30,
-                marginHorizontal: "auto",
-                backgroundColor: "#81d4fa",
-                boxShadow: "0px 2px 5px 2px #bdbdbd",
-              }}
-              labelStyle={{
-                color: "#ffffff",
-                fontWeight: "700",
-                fontSize: 15,
-                letterSpacing: 1,
-              }}>
-              Upload Package Pic
-            </Button>
-            <View style={{ marginTop: 10 }}>
+          )}
+          {odrState.pickupOrder && (
+            <View style={{ width: "100%", marginBottom: 20 }}>
               <Text
                 style={{
                   fontSize: 15,
@@ -905,480 +633,321 @@ const OrderDetails = ({ route }) => {
                   fontFamily: "Open Sans",
                   color: "#bdbdbd",
                   textAlign: "center",
-                  marginTop: 10,
+                  marginTop: 5,
                   marginBottom: 10,
                 }}>
-                Customer's Smile
+                Package Photo
               </Text>
-              {customerPic ? (
-                <View
-                  style={{
-                    width: "100%",
-                    height: 200,
-                    marginHorizontal: "auto",
-                  }}>
-                  <LazyLoadImage
-                    src={customerPic}
-                    resizemode='cover'
-                    effect='blur'
-                    style={{
-                      width: "100%",
-                      margin: "auto",
-                      height: 200,
-                      borderRadius: 20,
-                      boxShadow: "1px 3px 6px 1px #C9CCD1",
-                      resizeMode: "contain",
-                    }}
-                  />
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  width: "100%",
+                }}>
+                {image1 ? (
                   <View
-                    style={{
-                      position: "absolute",
-                      flexDirection: "row",
-                      right: 0,
-                      background: "none",
-                      width: 30,
-                      marginRight: 20,
-                      marginTop: 15,
-                      height: 30,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      borderRadius: 20,
-                    }}>
-                    <TouchableOpacity onPress={() => setCustomerPic(null)}>
-                      <Ionicons
-                        name='close-circle-outline'
-                        size={26}
-                        color='#82b1ff'
-                      />
-                    </TouchableOpacity>
+                    style={{ width: 150, height: 200, marginHorizontal: "auto" }}>
+                    <LazyLoadImage
+                      src={image1}
+                      resizemode='cover'
+                      effect='blur'
+                      style={{
+                        width: 150,
+                        marginLeft: "auto",
+                        height: 200,
+                        borderRadius: 20,
+                        boxShadow: "1px 3px 6px 1px #C9CCD1",
+                        resizeMode: "contain",
+                      }}
+                    />
+                    <View
+                      style={{
+                        position: "absolute",
+                        flexDirection: "row",
+                        right: 0,
+                        background: "none",
+                        width: 30,
+                        marginRight: 20,
+                        marginTop: 15,
+                        height: 30,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: 20,
+                      }}>
+                      <TouchableOpacity onPress={() => setImage1(null)}>
+                        <Ionicons
+                          name='close-circle-outline'
+                          size={26}
+                          color='#82b1ff'
+                        />
+                      </TouchableOpacity>
+                    </View>
                   </View>
-                </View>
-              ) : sendImgReq3 ? (
-                <TouchableOpacity
-                  style={{
-                    width: "100%",
-                    marginHorizontal: "auto",
-                    height: 200,
-                    backgroundColor: "#eeeeee",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    textAlign: "center",
-                    borderRadius: 20,
-                    boxShadow: "1px 3px 6px 1px #C9CCD1",
-                    padding: 10,
-                  }}
-                  onPress={pickImage3}>
-                  <Ionicons name='add' size={26} color='#82b1ff' />
-                  <Text style={styles.text_1}>Add Side View</Text>
-                </TouchableOpacity>
-              ) : (
-                <View
-                  style={{
-                    width: "100%",
-                    marginHorizontal: "auto",
-                    height: 200,
-                    backgroundColor: "#eeeeee",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    textAlign: "center",
-                    borderRadius: 20,
-                    boxShadow: "1px 3px 6px 1px #C9CCD1",
-                    padding: 10,
-                  }}>
-                  <ActivityIndicator
-                    animating={true}
-                    color='#82b1ff'
-                    size='large'
-                  />
-                </View>
-              )}
-            </View>
-            <Button
-              mode='contained'
-              onPress={uploadCustomerPic}
-              style={{
-                marginTop: 20,
-                width: "80%",
-                height: 30,
-                marginHorizontal: "auto",
-                backgroundColor: "#81d4fa",
-                boxShadow: "0px 2px 5px 2px #bdbdbd",
-              }}
-              labelStyle={{
-                color: "#ffffff",
-                fontWeight: "700",
-                fontSize: 15,
-                letterSpacing: 1,
-              }}>
-              Upload Customer Pic
-            </Button>
-          </View>
-        )}
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            width: "100%",
-            marginBottom: 20,
-          }}>
-          <Button
-            mode='contained'
-            onPress={() => navigation.goBack()}
-            style={{
-              marginVertical: 10,
-              width: 30,
-              height: 30,
-              borderRadius: 5,
-              backgroundColor: "#ffffff",
-              justifyContent: "center",
-              alignItems: "center",
-              boxShadow: "0px 2px 5px 2px #bdbdbd",
-            }}>
-            <Ionicons name='return-down-back' size={30} color='#c62828' />
-          </Button>
-          <Button
-            mode='contained'
-            onPress={orderDone}
-            style={{
-              marginVertical: 10,
-              width: 30,
-              height: 30,
-              borderRadius: 5,
-              backgroundColor: "#ffffff",
-              justifyContent: "center",
-              alignItems: "center",
-              boxShadow: "0px 2px 5px 2px #bdbdbd",
-            }}>
-            <Ionicons name='checkmark-sharp' size={30} color='#2e7d32' />
-          </Button>
-          <Snackbar
-            visible={visible1}
-            onDismiss={() => setVisible1(false)}
-            action={{
-              label: "Close",
-              onPress: () => setVisible1(false),
-            }}>
-            OOPS!! payment is not done.
-          </Snackbar>
-        </View>
-      </View>
-
-      <View
-        style={{
-          position: "absolute",
-          height: height * 0.7,
-          width: "100%",
-          // border: "1px solid black",
-        }}>
-        <View
-          style={{
-            width: "100%",
-            height: 60,
-            backgroundColor: "#00E0FF",
-          }}>
-          <View
-            style={{
-              width: "100%",
-              flexDirection: "row",
-              alignItems: "center",
-            }}>
-            <LazyLoadImage
-              style={{
-                width: 35,
-                height: 35,
-                marginLeft: 10,
-                marginTop: 10,
-                resizeMode: "cover",
-                borderRadius: 30,
-                boxShadow: "0px 2px 10px 1px #757575",
-              }}
-              src={require("../assets/logo/delivery_treazer_logo.png")}
-              effect='blur'
-            />
-            <Text
-              style={{
-                marginHorizontal: "auto",
-                color: "#ffffff",
-                fontWeight: "700",
-                fontSize: 20,
-                letterSpacing: 1,
-                marginVertical: "auto",
-              }}>
-              Order Details
-            </Text>
-          </View>
-        </View>
-        {odrState.pickupOrder ? (
-          <View style={{ width: "100%", padding: 20 }}>
-            <Text
-              style={{
-                fontSize: 15,
-                letterSpacing: 2,
-                fontWeight: "700",
-                fontFamily: "Open Sans",
-                color: "#212121",
-              }}>
-              {odrState.pickupOrder.userId.username}
-            </Text>
-            <View
-              style={{
-                justifyContent: "space-between",
-                marginVertical: 10,
-              }}>
-              <Text
-                style={{
-                  fontSize: 12,
-                  letterSpacing: 2,
-                  fontWeight: "400",
-                  fontFamily: "Open Sans",
-                  color: "#212121",
-                }}>
-                order time:
-                <Text
-                  style={{
-                    textAlign: "Center",
-                    fontSize: 12,
-                    letterSpacing: 2,
-                    fontWeight: "400",
-                    fontFamily: "Open Sans",
-                    color: "#212121",
-                  }}>
-                  {odrState.pickupOrder.createdAt}
-                </Text>
-              </Text>
-              <Text
-                style={{
-                  fontSize: 12,
-                  letterSpacing: 2,
-                  fontWeight: "600",
-                  fontFamily: "Open Sans",
-                  color: "#212121",
-                  marginVertical: 5,
-                }}>
-                Order ID:{" "}
-                <Text
-                  style={{
-                    textAlign: "Center",
-                    fontSize: 12,
-                    letterSpacing: 2,
-                    fontWeight: "600",
-                    fontFamily: "Open Sans",
-                    color: "#212121",
-                  }}>
-                  {odrState.pickupOrder._id}
-                </Text>
-              </Text>
-            </View>
-            <Divider
-              style={{
-                height: 3,
-                width: "100%",
-                backgroundColor: "#bdbdbd",
-                marginHorizontal: "auto",
-              }}
-            />
-            <View
-              style={{
-                justifyContent: "space-between",
-                marginVertical: 10,
-              }}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}>
-                <Text
-                  style={{
-                    fontSize: 12,
-                    letterSpacing: 2,
-                    fontWeight: "600",
-                    fontFamily: "Open Sans",
-                    color: "#212121",
-                  }}>
-                  order Amount
-                </Text>
-                <Text
-                  style={{
-                    textAlign: "Center",
-                    fontSize: 12,
-                    letterSpacing: 2,
-                    fontWeight: "600",
-                    fontFamily: "Open Sans",
-                    color: "#212121",
-                  }}>
-                  Rs.{odrState.pickupOrder.totalPrice}
-                </Text>
+                ) : sendImgReq1 ? (
+                  <TouchableOpacity style={styles.div_2} onPress={pickImage1}>
+                    <Ionicons name='add' size={26} color='#82b1ff' />
+                    <Text style={styles.text_1}>Add Top View</Text>
+                  </TouchableOpacity>
+                ) : (
+                  <View style={styles.div_2}>
+                    <ActivityIndicator
+                      animating={true}
+                      color='#82b1ff'
+                      size='large'
+                    />
+                  </View>
+                )}
+                {image2 ? (
+                  <View
+                    style={{ width: 150, height: 200, marginHorizontal: "auto" }}>
+                    <LazyLoadImage
+                      src={image2}
+                      resizemode='cover'
+                      effect='blur'
+                      style={{
+                        width: 150,
+                        marginLeft: "auto",
+                        height: 200,
+                        borderRadius: 20,
+                        boxShadow: "1px 3px 6px 1px #C9CCD1",
+                        resizeMode: "contain",
+                      }}
+                    />
+                    <View
+                      style={{
+                        position: "absolute",
+                        flexDirection: "row",
+                        right: 0,
+                        background: "none",
+                        width: 30,
+                        marginRight: 20,
+                        marginTop: 15,
+                        height: 30,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: 20,
+                      }}>
+                      <TouchableOpacity onPress={() => setImage2(null)}>
+                        <Ionicons
+                          name='close-circle-outline'
+                          size={26}
+                          color='#82b1ff'
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ) : sendImgReq2 ? (
+                  <TouchableOpacity style={styles.div_2} onPress={pickImage2}>
+                    <Ionicons name='add' size={26} color='#82b1ff' />
+                    <Text style={styles.text_1}>Add Side View</Text>
+                  </TouchableOpacity>
+                ) : (
+                  <View style={styles.div_2}>
+                    <ActivityIndicator
+                      animating={true}
+                      color='#82b1ff'
+                      size='large'
+                    />
+                  </View>
+                )}
               </View>
-              <Divider
+              <Button
+                mode='contained'
+                onPress={uploadPackagePic}
                 style={{
-                  height: 1,
-                  width: "100%",
-                  backgroundColor: "#bdbdbd",
+                  marginTop: 20,
+                  width: "80%",
+                  height: 30,
                   marginHorizontal: "auto",
-                  marginVertical: 5,
+                  backgroundColor: "#81d4fa",
+                  boxShadow: "0px 2px 5px 2px #bdbdbd",
                 }}
-              />
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
+                labelStyle={{
+                  color: "#ffffff",
+                  fontWeight: "700",
+                  fontSize: 15,
+                  letterSpacing: 1,
                 }}>
-                <Text
-                  style={{
-                    fontSize: 12,
-                    letterSpacing: 2,
-                    fontWeight: "600",
-                    fontFamily: "Open Sans",
-                    color: "#212121",
-                    marginVertical: 5,
-                  }}>
-                  Payment Type
-                </Text>
-                <Text
-                  style={{
-                    textAlign: "Center",
-                    fontSize: 12,
-                    letterSpacing: 2,
-                    fontWeight: "600",
-                    fontFamily: "Open Sans",
-                    color: "#212121",
-                  }}>
-                  Pre-paid
-                </Text>
-              </View>
-              <Divider
-                style={{
-                  height: 1,
-                  width: "100%",
-                  backgroundColor: "#bdbdbd",
-                  marginHorizontal: "auto",
-                  marginVertical: 5,
-                }}
-              />
-              <View
-                style={{
-                  flex: 1,
-                  width: "100%",
-                  backgroundColor: "#ffffff",
-                  marginHorizontal: "auto",
-                  marginVertical: 5,
-                  paddingRight: 10,
-                }}>
+                Upload Package Pic
+              </Button>
+              <View style={{ marginTop: 10 }}>
                 <Text
                   style={{
                     fontSize: 15,
                     letterSpacing: 2,
                     fontWeight: "700",
                     fontFamily: "Open Sans",
-                    color: "#37474f",
-                    marginVertical: 5,
+                    color: "#bdbdbd",
+                    textAlign: "center",
+                    marginTop: 10,
+                    marginBottom: 10,
                   }}>
-                  Seller Info
+                  Customer's Smile
                 </Text>
-                <View style={{ flexDirection: "row" }}>
-                  <View>
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        letterSpacing: 2,
-                        fontWeight: "400",
-                        fontFamily: "Open Sans",
-                        color: "#212121",
-                      }}>
-                      Store Name
-                    </Text>
-
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        letterSpacing: 2,
-                        fontWeight: "400",
-                        fontFamily: "Open Sans",
-                        color: "#212121",
-                      }}>
-                      Phone No
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        letterSpacing: 2,
-                        fontWeight: "400",
-                        fontFamily: "Open Sans",
-                        color: "#212121",
-                      }}>
-                      Address
-                    </Text>
-                  </View>
+                {customerPic ? (
                   <View
                     style={{
-                      marginLeft: 5,
-                      width: "70%",
+                      width: "100%",
+                      height: 200,
+                      marginHorizontal: "auto",
                     }}>
-                    <Text
+                    <LazyLoadImage
+                      src={customerPic}
+                      resizemode='cover'
+                      effect='blur'
                       style={{
-                        fontSize: 12,
-                        letterSpacing: 2,
-                        fontWeight: "400",
-                        fontFamily: "Open Sans",
-                        color: "#212121",
-                      }}>
-                      :{odrState.pickupOrder.resturantId.resturant_name}
-                    </Text>
+                        width: "100%",
+                        margin: "auto",
+                        height: 200,
+                        borderRadius: 20,
+                        boxShadow: "1px 3px 6px 1px #C9CCD1",
+                        resizeMode: "contain",
+                      }}
+                    />
                     <View
                       style={{
+                        position: "absolute",
                         flexDirection: "row",
-                        justifyContent: "space-between",
+                        right: 0,
+                        background: "none",
+                        width: 30,
+                        marginRight: 20,
+                        marginTop: 15,
+                        height: 30,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: 20,
                       }}>
-                      <Text
-                        style={{
-                          fontSize: 12,
-                          // letterSpacing: 2,
-                          fontWeight: "600",
-                          fontFamily: "Open Sans",
-                          color: "#212121",
-                        }}>
-                        :{odrState.pickupOrder.resturantId.phone}
-                      </Text>
-                      <div
-                        onClick={() =>
-                          copy(odrState.pickupOrder.resturantId.phone)
-                        }
-                        style={{
-                          marginLeft: 5,
-                          width: 60,
-                          backgroundColor: "#eeeeee",
-                          boxShadow: "0px 2px 5px 2px #eeeeee",
-                          fontFamily: "Open Sans",
-                          fontWeight: "600",
-                          fontSize: 10,
-                          marginBottom: 5,
-                          textAlign: "center",
-                        }}>
-                        Copy no.
-                      </div>
+                      <TouchableOpacity onPress={() => setCustomerPic(null)}>
+                        <Ionicons
+                          name='close-circle-outline'
+                          size={26}
+                          color='#82b1ff'
+                        />
+                      </TouchableOpacity>
                     </View>
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        letterSpacing: 2,
-                        fontWeight: "400",
-                        fontFamily: "Open Sans",
-                        color: "#212121",
-                      }}>
-                      :{odrState.pickupOrder.resturantId.address}
-                    </Text>
                   </View>
-                </View>
+                ) : sendImgReq3 ? (
+                  <TouchableOpacity
+                    style={{
+                      width: "100%",
+                      marginHorizontal: "auto",
+                      height: 200,
+                      backgroundColor: "#eeeeee",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      textAlign: "center",
+                      borderRadius: 20,
+                      boxShadow: "1px 3px 6px 1px #C9CCD1",
+                      padding: 10,
+                    }}
+                    onPress={pickImage3}>
+                    <Ionicons name='add' size={26} color='#82b1ff' />
+                    <Text style={styles.text_1}>Add Side View</Text>
+                  </TouchableOpacity>
+                ) : (
+                  <View
+                    style={{
+                      width: "100%",
+                      marginHorizontal: "auto",
+                      height: 200,
+                      backgroundColor: "#eeeeee",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      textAlign: "center",
+                      borderRadius: 20,
+                      boxShadow: "1px 3px 6px 1px #C9CCD1",
+                      padding: 10,
+                    }}>
+                    <ActivityIndicator
+                      animating={true}
+                      color='#82b1ff'
+                      size='large'
+                    />
+                  </View>
+                )}
               </View>
-              <Divider
+              <Button
+                mode='contained'
+                onPress={uploadCustomerPic}
                 style={{
-                  height: 1,
-                  width: "100%",
-                  backgroundColor: "#bdbdbd",
+                  marginTop: 20,
+                  width: "80%",
+                  height: 30,
                   marginHorizontal: "auto",
-                  marginVertical: 5,
+                  backgroundColor: "#81d4fa",
+                  boxShadow: "0px 2px 5px 2px #bdbdbd",
                 }}
-              />
+                labelStyle={{
+                  color: "#ffffff",
+                  fontWeight: "700",
+                  fontSize: 15,
+                  letterSpacing: 1,
+                }}>
+                Upload Customer Pic
+              </Button>
+            </View>
+          )}
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              width: "100%",
+              marginBottom: 20,
+            }}>
+            <Button
+              mode='contained'
+              onPress={() => navigation.goBack()}
+              style={{
+                marginVertical: 10,
+                width: 30,
+                height: 30,
+                borderRadius: 5,
+                backgroundColor: "#ffffff",
+                justifyContent: "center",
+                alignItems: "center",
+                boxShadow: "0px 2px 5px 2px #bdbdbd",
+              }}>
+              <Ionicons name='return-down-back' size={30} color='#c62828' />
+            </Button>
+            <Button
+              mode='contained'
+              onPress={orderDone}
+              style={{
+                marginVertical: 10,
+                width: 30,
+                height: 30,
+                borderRadius: 5,
+                backgroundColor: "#ffffff",
+                justifyContent: "center",
+                alignItems: "center",
+                boxShadow: "0px 2px 5px 2px #bdbdbd",
+              }}>
+              <Ionicons name='checkmark-sharp' size={30} color='#2e7d32' />
+            </Button>
+            <Snackbar
+              visible={visible1}
+              onDismiss={() => setVisible1(false)}
+              action={{
+                label: "Close",
+                onPress: () => setVisible1(false),
+              }}>
+              OOPS!! payment is not done.
+            </Snackbar>
+          </View>
+        </View>
+
+        <View
+          style={{
+            position: "absolute",
+            height: height * 0.7,
+            width: "100%",
+            // border: "1px solid black",
+          }}>
+          {odrState.pickupOrder ? (
+            <View style={{ width: "100%", padding: 20 }}>
+              <OrderInfo odrState={odrState} />
+              <SellerInfo odrState={odrState} />
               {odrState.pickupOrder.isSellerOTPmatched ? (
                 <View
                   style={{
@@ -1399,7 +968,7 @@ const OrderDetails = ({ route }) => {
                   </Text>
                 </View>
               ) : (
-                <View style={{ width: "100%", flex: 1 }}>
+                <View style={{ width: "100%", flex: 1, marginTop: 20 }}>
                   <Text
                     style={{
                       fontSize: 15,
@@ -1466,41 +1035,41 @@ const OrderDetails = ({ route }) => {
                 </View>
               )}
             </View>
-          </View>
-        ) : (
-          <View style={{ width: "100%", marginVertical: "auto", padding: 20 }}>
-            <Text
-              style={{
-                textAlign: "Center",
-                fontSize: 20,
-                letterSpacing: 2,
-                fontWeight: "700",
-                fontFamily: "Open Sans",
-                color: "#bdbdbd",
-              }}>
-              You have to view an order to show in map
-            </Text>
-          </View>
-        )}
-      </View>
-      <Portal>
-        <Dialog visible={visible} onDismiss={hideDialog}>
-          <Dialog.Content
-            style={{ justifyContent: "center", alignItems: "center" }}>
-            <Paragraph
-              style={{
-                fontSize: 15,
-                fontWeight: "700",
-                textAlign: "center",
-                letterSpacing: 2,
-              }}>
-              {" "}
-              {OTPmsg}
-            </Paragraph>
-          </Dialog.Content>
-        </Dialog>
-      </Portal>
-    </ScrollView>
+          ) : (
+            <View style={{ width: "100%", marginVertical: "auto", padding: 20 }}>
+              <Text
+                style={{
+                  textAlign: "Center",
+                  fontSize: 20,
+                  letterSpacing: 2,
+                  fontWeight: "700",
+                  fontFamily: "Open Sans",
+                  color: "#bdbdbd",
+                }}>
+                You have to view an order to show in map
+              </Text>
+            </View>
+          )}
+        </View>
+        <Portal>
+          <Dialog visible={visible} onDismiss={hideDialog}>
+            <Dialog.Content
+              style={{ justifyContent: "center", alignItems: "center" }}>
+              <Paragraph
+                style={{
+                  fontSize: 15,
+                  fontWeight: "700",
+                  textAlign: "center",
+                  letterSpacing: 2,
+                }}>
+                {" "}
+                {OTPmsg}
+              </Paragraph>
+            </Dialog.Content>
+          </Dialog>
+        </Portal>
+      </ScrollView>
+    </View>
   );
 };
 

@@ -40,7 +40,7 @@ const AssignedOrders = ({ setVisible }) => {
       )
       .then((res) => {
         const { assignedOrder } = res.data;
-        console.log(assignedOrder);
+        // console.log(assignedOrder);
         orderDispatch({ type: "ASSIGNED_ORDER", payload: assignedOrder });
         setAssignedOrderReq(true);
       })
@@ -218,7 +218,7 @@ const AssignedOrders = ({ setVisible }) => {
                     color: "#424242",
                     letterSpacing: 1,
                   }}>
-                  {order.createdAt}
+                  {new Date(order.createdAt).toDateString()}
                 </Text>
               </Text>
               <View
@@ -259,7 +259,7 @@ const AssignedOrders = ({ setVisible }) => {
                       color: "#424242",
                       letterSpacing: 1,
                     }}>
-                    Rs.{order.totalPrice}
+                    Rs.{order.totalPrice + order.resturantId.deliveryPrice}
                   </Text>
                 </View>
                 <View
