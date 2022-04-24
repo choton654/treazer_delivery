@@ -117,7 +117,7 @@ const AccountHold = () => {
             }}>
             Phone No:
             <Text style={{ marginHorizontal: 10, fontWeight: "bold" }}>
-              74562136985
+              9614887687
             </Text>
           </Text>
         </View>
