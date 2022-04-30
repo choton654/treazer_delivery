@@ -8,8 +8,8 @@ import BASE_URL from "../api";
 import { orderState } from "./context/orderContext";
 
 const NewOrders = ({ setVisible1 }) => {
-  const { state: odrState, dispatch: orderDispatch } = orderState();
 
+  const { state: odrState, dispatch: orderDispatch } = orderState();
   const [acceptOrderReq, setAcceptOrderReq] = useState(true);
 
   const token = localStorage.getItem("token");
@@ -115,7 +115,6 @@ const NewOrders = ({ setVisible1 }) => {
             <View
               key={idx}
               style={{
-                height: 220,
                 paddingHorizontal: 10,
                 marginTop: 10,
               }}>
@@ -256,6 +255,29 @@ const NewOrders = ({ setVisible1 }) => {
                       order.shippingaddress.formattedAddress}
                   </Text>
                 </View>
+                <View style={{ marginHorizontal: 10, marginBottom: 10 }}>
+                  <Text style={{
+                    marginBottom: 5,
+                    fontWeight: "600",
+                    fontSize: 15
+                  }}>Order Items
+                  </Text>
+                  {order.orderItems.map((item, idx) =>
+                    <View key={idx}>
+                      <View style={{
+                        flexDirection: "row", justifyContent: "space-between",
+                        alignItems: "center"
+                      }}>
+                        <Text>{item.product?.name}</Text>
+                        <Text>{item.quantity}x{item.product?.price}={parseInt(item.quantity) * parseInt(item.product?.price)}</Text>
+                      </View>
+                    </View>
+                  )}
+                  <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                    <Text>Total</Text>
+                    <Text>{order.totalPrice}</Text>
+                  </View>
+                </View>
                 {acceptOrderReq ? (
                   <View
                     style={{
@@ -263,42 +285,49 @@ const NewOrders = ({ setVisible1 }) => {
                       justifyContent: "space-around",
                       marginBottom: 5,
                     }}>
-                    <Button
-                      mode='contained'
-                      onPress={() => acceptOrder(user._id, order._id)}
-                      style={{
-                        marginBottom: 10,
-                        width: "20%",
-                        height: 30,
-                        backgroundColor: "#4fc3f7",
-                        boxShadow: "0px 2px 5px 2px #bdbdbd",
-                      }}
-                      labelStyle={{
-                        color: "#ffffff",
-                        fontWeight: "700",
-                        fontSize: 12,
-                        marginHorizontal: "none",
-                      }}>
-                      Accept
-                    </Button>
-                    <Button
-                      mode='contained'
-                      onPress={() => rejectOrder(order._id)}
-                      style={{
-                        marginBottom: 10,
-                        width: "20%",
-                        height: 30,
-                        backgroundColor: "#ff5252",
-                        boxShadow: "0px 2px 5px 2px #bdbdbd",
-                      }}
-                      labelStyle={{
-                        color: "#ffffff",
-                        fontWeight: "700",
-                        fontSize: 12,
-                        marginHorizontal: "none",
-                      }}>
-                      Reject
-                    </Button>
+                    {!order.isRestaurantOwnerVerify &&
+                      <Text style={{ fontSize: 15, fontWeight: "600" }}>Restaurant owner hasn't verify order yet</Text>
+                    }
+                    {order.isRestaurantOwnerVerify &&
+                      <Button
+                        mode='contained'
+                        onPress={() => acceptOrder(user._id, order._id)}
+                        style={{
+                          marginBottom: 10,
+                          width: "20%",
+                          height: 30,
+                          backgroundColor: "#4fc3f7",
+                          boxShadow: "0px 2px 5px 2px #bdbdbd",
+                        }}
+                        labelStyle={{
+                          color: "#ffffff",
+                          fontWeight: "700",
+                          fontSize: 12,
+                          marginHorizontal: "none",
+                        }}>
+                        Accept
+                      </Button>
+                    }
+                    {order.isRestaurantOwnerVerify &&
+                      <Button
+                        mode='contained'
+                        onPress={() => rejectOrder(order._id)}
+                        style={{
+                          marginBottom: 10,
+                          width: "20%",
+                          height: 30,
+                          backgroundColor: "#ff5252",
+                          boxShadow: "0px 2px 5px 2px #bdbdbd",
+                        }}
+                        labelStyle={{
+                          color: "#ffffff",
+                          fontWeight: "700",
+                          fontSize: 12,
+                          marginHorizontal: "none",
+                        }}>
+                        Reject
+                      </Button>
+                    }
                   </View>
                 ) : (
                   <View

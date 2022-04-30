@@ -312,7 +312,29 @@ const AssignedOrders = ({ setVisible }) => {
                     order.shippingaddress.formattedAddress}
                 </Text>
               </View>
-
+              <View style={{ marginHorizontal: 10, marginBottom: 10 }}>
+                <Text style={{
+                  marginBottom: 5,
+                  fontWeight: "600",
+                  fontSize: 15
+                }}>Order Items
+                </Text>
+                {order.orderItems.map((item, idx) =>
+                  <View key={idx}>
+                    <View style={{
+                      flexDirection: "row", justifyContent: "space-between",
+                      alignItems: "center"
+                    }}>
+                      <Text>{item.product?.name}</Text>
+                      <Text>{item.quantity}x{item.product?.price}={parseInt(item.quantity) * parseInt(item.product?.price)}</Text>
+                    </View>
+                  </View>
+                )}
+                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                  <Text>Total</Text>
+                  <Text>{order.totalPrice}</Text>
+                </View>
+              </View>
               {pickuporderReq && order.isPickedup === false ? (
                 <View
                   style={{

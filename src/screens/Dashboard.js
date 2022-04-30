@@ -91,9 +91,9 @@ const Dashboard = () => {
           <TabPanel>
             <View
               style={{
-                height: height * 0.7,
+                height: height * 0.75,
                 width: "100%",
-                //   border: "1px solid black",
+                paddingBottom: 10
               }}>
               <Suspense
                 fallback={
@@ -137,9 +137,8 @@ const Dashboard = () => {
           <TabPanel>
             <View
               style={{
-                height: height * 0.7,
+                height: height * 0.75,
                 width: "100%",
-                // border: "1px solid black",
               }}>
               <Suspense
                 fallback={
@@ -192,6 +191,6 @@ export default Dashboard;
 const styles = StyleSheet.create({
   v1: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: "#ffffff"
   },
 });

@@ -251,7 +251,7 @@ const OrderDetails = ({ route }) => {
       quality: 1,
       base64: true,
     });
-    console.log(result);
+    // console.log(result);
     if (!result.cancelled) {
       let data = {
         file: result.uri,
@@ -287,7 +287,7 @@ const OrderDetails = ({ route }) => {
       quality: 1,
       base64: true,
     });
-    console.log(result);
+    // console.log(result);
     if (!result.cancelled) {
       let data = {
         file: result.uri,
@@ -322,7 +322,7 @@ const OrderDetails = ({ route }) => {
       quality: 1,
       base64: true,
     });
-    console.log(result);
+    // console.log(result);
     if (!result.cancelled) {
       let data = {
         file: result.uri,

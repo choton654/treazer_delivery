@@ -53,7 +53,7 @@ const Profile = () => {
             textAlign: "center",
             marginVertical: 20,
           }}>
-          {state.user && state.user.username}
+          {state.user && state.user.userId}
         </Text>
         <View style={{ padding: 10 }}>
           <Text
