@@ -50,7 +50,7 @@ const OrderDetails = ({ route }) => {
   const [getAddress, setGetAddress] = useState(false);
   const [getRestaurantAddress, setGetRestaurantAddress] = useState(true);
 
-  const [sellerOTP, setSellerOTP] = useState("");
+  // const [sellerOTP, setSellerOTP] = useState("");
   const [buyerOTP, setBuyerOTP] = useState("");
 
   const orderAddressLongitude =
@@ -72,7 +72,7 @@ const OrderDetails = ({ route }) => {
     odrState.pickupOrder.resturantId.location &&
     odrState.pickupOrder.resturantId.location.coordinates &&
     odrState.pickupOrder.resturantId.location.coordinates[1];
-  // console.log(restaurantAddressLongitude, restaurantAddressLattitude);
+
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: mapContainer.current,
@@ -114,18 +114,22 @@ const OrderDetails = ({ route }) => {
       .setLngLat([locationState.longitude, locationState.latitude])
       .addTo(map);
 
-    new mapboxgl.Marker({
-      color: "#4caf50",
-      draggable: false,
-    })
-      .setLngLat([orderAddressLongitude, orderAddressLattitude])
-      .addTo(map);
-    new mapboxgl.Marker({
-      color: "#fbc02d",
-      draggable: false,
-    })
-      .setLngLat([restaurantAddressLongitude, restaurantAddressLattitude])
-      .addTo(map);
+    if (orderAddressLongitude && orderAddressLattitude) {
+      new mapboxgl.Marker({
+        color: "#4caf50",
+        draggable: false,
+      })
+        .setLngLat([orderAddressLongitude, orderAddressLattitude])
+        .addTo(map);
+    }
+    if (restaurantAddressLongitude, restaurantAddressLattitude) {
+      new mapboxgl.Marker({
+        color: "#fbc02d",
+        draggable: false,
+      })
+        .setLngLat([restaurantAddressLongitude, restaurantAddressLattitude])
+        .addTo(map);
+    }
     if (getAddress) {
       map.on("load", () => {
         axios
@@ -406,8 +410,10 @@ const OrderDetails = ({ route }) => {
   const [visible1, setVisible1] = useState(false);
   const [OTPmsg, setOTPmsg] = useState("");
   const hideDialog = () => setVisible(false);
-  const OTPmatch = () => {
+
+  const OTPmatch = (OTP) => {
     const orderId = odrState.pickupOrder && odrState.pickupOrder._id;
+    const sellerOTP = typeof OTP === 'string' ? OTP : ''
     setOTPreq(false);
     axios
       .post(
@@ -421,7 +427,6 @@ const OrderDetails = ({ route }) => {
         }
       )
       .then((res) => {
-        console.log(res.data);
         const { order, msg } = res.data;
         orderDispatch({ type: "GET_ONE_PICKUP_ORDER", payload: order });
         setVisible(true);
@@ -432,6 +437,12 @@ const OrderDetails = ({ route }) => {
         console.log(err);
       });
   };
+
+  useEffect(() => {
+    if (!odrState.pickupOrder?.isSellerOTPmatched) {
+      OTPmatch(odrState.pickupOrder?.OTP)
+    }
+  }, [odrState.pickupOrder?.isSellerOTPmatched])
 
   const orderDone = () => {
     if (!odrState.pickupOrder) {
@@ -481,7 +492,7 @@ const OrderDetails = ({ route }) => {
             borderBottomRightRadius: 20,
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
-            top: height * 0.7,
+            top: height * 0.5,
           }}>
           <View
             style={{
@@ -564,7 +575,7 @@ const OrderDetails = ({ route }) => {
                       // error={phoneError ? true : false}
                       onChangeText={(text) => {
                         setBuyerOTP(text);
-                        setSellerOTP("");
+                        // setSellerOTP("");
                       }}
                       mode='outlined'
                       style={{
@@ -986,12 +997,12 @@ const OrderDetails = ({ route }) => {
                     }}>
                     <TextInput
                       placeholder='OTP'
-                      value={sellerOTP}
+                      value={odrState.pickupOrder.OTP}
                       // error={phoneError ? true : false}
-                      onChangeText={(text) => {
-                        setSellerOTP(text);
-                        setBuyerOTP("");
-                      }}
+                      // onChangeText={(text) => {
+                      //   setSellerOTP(text);
+                      //   setBuyerOTP("");
+                      // }}
                       mode='outlined'
                       style={{
                         marginTop: 10,
@@ -1005,9 +1016,10 @@ const OrderDetails = ({ route }) => {
                     {OTPreq ? (
                       <Button
                         mode='contained'
-                        onPress={OTPmatch}
+                        // onPress={OTPmatch}
                         compact={true}
-                        disabled={sellerOTP === "" ? true : false}
+                        // disabled={sellerOTP === "" ? true : false}
+                        disabled={true}
                         style={{
                           marginVertical: 5,
                           width: 80,
