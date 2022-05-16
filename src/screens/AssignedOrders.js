@@ -198,7 +198,7 @@ const AssignedOrders = ({ setVisible }) => {
                   color: "#424242",
                   letterSpacing: 1,
                 }}>
-                {order.userId && order.userId.username}
+                {order.userId && order.userId?.userId}
               </Text>
               <Text
                 style={{
