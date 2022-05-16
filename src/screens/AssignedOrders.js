@@ -172,7 +172,6 @@ const AssignedOrders = ({ setVisible }) => {
           <View
             key={idx}
             style={{
-              height: 220,
               paddingHorizontal: 10,
               marginTop: 10,
             }}>
