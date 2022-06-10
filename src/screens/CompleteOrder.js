@@ -91,7 +91,7 @@ const CompleteOrder = () => {
                     color: "#424242",
                     letterSpacing: 1,
                   }}>
-                  {order.userId.username}
+                  {order.userId ? order.userId?.userId : order.userId.username}
                 </Text>
                 <Text
                   style={{

@@ -311,6 +311,52 @@ const AssignedOrders = ({ setVisible }) => {
                     order.shippingaddress.formattedAddress}
                 </Text>
               </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  marginVertical: 10,
+                }}>
+                <Ionicons
+                  name='location-sharp'
+                  size={20}
+                  color='#4fc3f7'
+                  style={{ marginLeft: 10 }}
+                />
+                <Text
+                  style={{
+                    marginHorizontal: 5,
+                    fontWeight: "600",
+                    fontSize: 12,
+                    color: "#424242",
+                    letterSpacing: 1,
+                  }}>
+                  Land mark: {order.shippingaddress &&
+                    order.shippingaddress?.landmark}
+                </Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  marginVertical: 10,
+                }}>
+                <Ionicons
+                  name='location-sharp'
+                  size={20}
+                  color='#4fc3f7'
+                  style={{ marginLeft: 10 }}
+                />
+                <Text
+                  style={{
+                    marginHorizontal: 5,
+                    fontWeight: "600",
+                    fontSize: 12,
+                    color: "#424242",
+                    letterSpacing: 1,
+                  }}>
+                  Flat No: {order.shippingaddress &&
+                    order.shippingaddress?.flatNo}
+                </Text>
+              </View>
               <View style={{ marginHorizontal: 10, marginBottom: 10 }}>
                 <Text style={{
                   marginBottom: 5,
