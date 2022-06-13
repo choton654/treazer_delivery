@@ -105,7 +105,9 @@ const NewOrders = ({ setVisible1 }) => {
 
   return (
     <ScrollView
+      showsVerticalScrollIndicator={false}
       contentContainerStyle={{
+        paddingBottom: 20,
         width: "100%",
         backgroundColor: "#ffffff",
       }}>
@@ -116,32 +118,44 @@ const NewOrders = ({ setVisible1 }) => {
               key={idx}
               style={{
                 paddingHorizontal: 10,
-                marginTop: 10,
+                marginTop: 20,
               }}>
               <View
                 style={{
-                  borderColor: "#455a64",
                   borderBottomLeftRadius: 20,
                   borderBottomRightRadius: 20,
                   borderTopRightRadius: 20,
                   borderTopLeftRadius: 20,
-                  borderLeftWidth: 1,
-                  borderRightWidth: 1,
-                  borderTopWidth: 1,
-                  borderBottomWidth: 1,
-                  borderStyle: "solid",
+                  shadowColor: "#bdbdbd",
+                  shadowOpacity: 1,
+                  shadowRadius: 10,
+                  shadowOffset: { width: 0, height: 3 },
                 }}>
-                <Text
-                  style={{
-                    marginTop: 5,
-                    marginLeft: 10,
-                    fontWeight: "600",
-                    fontSize: 15,
-                    color: "#424242",
-                    letterSpacing: 1,
-                  }}>
-                  {order.userId && order.userId?.userId}
-                </Text>
+                <View style={{ flexDirection: "row" }}>
+
+                  <Text
+                    style={{
+                      marginTop: 5,
+                      marginLeft: 10,
+                      fontWeight: "600",
+                      fontSize: 15,
+                      color: "#424242",
+                      letterSpacing: 1,
+                    }}>
+                    {order.userId && order.userId?.userId}
+                  </Text>
+                  <Text
+                    style={{
+                      marginTop: 5,
+                      marginLeft: 10,
+                      fontWeight: "600",
+                      fontSize: 15,
+                      color: "#424242",
+                      letterSpacing: 1,
+                    }}>
+                    {order.userId && order.userId.mobile_no}
+                  </Text>
+                </View>
                 <Text
                   style={{
                     marginVertical: 5,

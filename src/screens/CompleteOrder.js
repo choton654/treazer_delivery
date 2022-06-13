@@ -67,20 +67,19 @@ const CompleteOrder = () => {
               style={{
                 height: 120,
                 paddingHorizontal: 10,
-                marginTop: 10,
+                marginTop: 20,
               }}>
               <View
                 style={{
-                  borderColor: "#455a64",
                   borderBottomLeftRadius: 20,
                   borderBottomRightRadius: 20,
                   borderTopRightRadius: 20,
                   borderTopLeftRadius: 20,
-                  borderLeftWidth: 1,
-                  borderRightWidth: 1,
-                  borderTopWidth: 1,
-                  borderBottomWidth: 1,
-                  borderStyle: "solid",
+                  shadowColor: "#bdbdbd",
+                  shadowOpacity: 1,
+                  shadowRadius: 10,
+                  shadowOffset: { width: 0, height: 3 },
+
                 }}>
                 <Text
                   style={{

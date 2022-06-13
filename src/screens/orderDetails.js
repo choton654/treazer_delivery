@@ -480,7 +480,8 @@ const OrderDetails = ({ route }) => {
   return (
     <View style={{ flex: 1 }}>
       <Header title={"Order Details"} />
-      <ScrollView style={{ flex: 1, backgroundColor: "#ffffff" }}>
+      <ScrollView style={{ flex: 1, backgroundColor: "#ffffff" }}
+        showsVerticalScrollIndicator={false}>
         <View
           style={{
             height: height * 1.8,

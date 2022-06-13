@@ -121,6 +121,61 @@ const BuyerInfo = ({ odrState }) => {
                         {odrState.pickupOrder.userId.location.formattedAddress}
                     </Text>
                 </View>
+                <View style={{
+                    marginVertical: 5,
+                    flexDirection: "row", justifyContent: "space-between",
+                }}>
+                    <Text
+                        style={{
+                            width: 100,
+                            fontSize: 12,
+                            letterSpacing: 2,
+                            fontWeight: "600",
+                            fontFamily: "Open Sans",
+                            color: "#212121",
+                        }}>
+                        Landmark
+                    </Text>
+                    <Text
+                        style={{
+                            width: width * 0.6,
+                            fontSize: 12,
+                            letterSpacing: 2,
+                            fontWeight: "600",
+                            fontFamily: "Open Sans",
+                            color: "#212121",
+                            textAlign: "right"
+                        }}>
+                        {odrState.pickupOrder.shippingaddress.landmark}
+                    </Text>
+                </View>
+                <View style={{
+                    flexDirection: "row", justifyContent: "space-between",
+                }}>
+                    <Text
+                        style={{
+                            width: 100,
+                            fontSize: 12,
+                            letterSpacing: 2,
+                            fontWeight: "600",
+                            fontFamily: "Open Sans",
+                            color: "#212121",
+                        }}>
+                        House No.
+                    </Text>
+                    <Text
+                        style={{
+                            width: width * 0.6,
+                            fontSize: 12,
+                            letterSpacing: 2,
+                            fontWeight: "600",
+                            fontFamily: "Open Sans",
+                            color: "#212121",
+                            textAlign: "right"
+                        }}>
+                        {odrState.pickupOrder.shippingaddress.flatNo}
+                    </Text>
+                </View>
             </View>
         </View>
     )
